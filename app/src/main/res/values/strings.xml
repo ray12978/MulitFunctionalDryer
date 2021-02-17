@@ -1,0 +1,16 @@
+<resources>
+    <string name="app_name">MulitFunctionalDryer</string>
+    <string name="item1_title">首頁</string>
+    <string name="item2_title">定時模式</string>
+    <string name="item3_title">藍芽設定</string>
+    <string name="top_appbar_item1">藍芽連線</string>
+    <string name="top_appbar_item2">重新整理</string>
+    <string name="nav_header_title">Android Studio</string>
+    <string name="nav_header_subtitle">android.studio@android.com</string>
+    <string name="nav_header_desc">Navigation header</string>
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="menu">側邊欄</string>
+    <string name="radio_btn_title_1">吹風裝置1 段數</string>
+    <string name="radio_btn_title_2">吹風裝置2 段數</string>
+</resources>

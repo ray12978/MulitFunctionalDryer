@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+
+    <item android:title="@string/item1_title"
+        android:icon="@drawable/drawable_home"
+        android:id="@+id/nav1"
+        />
+    <item android:title="@string/item2_title"
+        android:id="@+id/nav2"
+        android:icon="@drawable/drawable_timer"
+        />
+    <item android:title="@string/item3_title"
+        android:id="@+id/nav3"
+        android:icon="@drawable/drawable_bluetooth"
+        />
+</menu>

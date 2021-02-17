@@ -1,0 +1,3 @@
+include ':rxbluetooth'
+include ':app'
+rootProject.name = "MulitFunctionalDryer"
