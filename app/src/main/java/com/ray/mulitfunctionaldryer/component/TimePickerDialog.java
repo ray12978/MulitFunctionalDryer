@@ -38,8 +38,6 @@ public class TimePickerDialog {
         SecondPick = view.findViewById(R.id.numberPicker_Sec);
 
         /**設置NumberPicker的最大、最小以及NumberPicker現在要顯示的內容*/
-
-        final String[] SpdList = activity.getResources().getStringArray(R.array.Speed_List);
         HourPick.setMinValue(0);
         HourPick.setMaxValue(6);
         MinutePick.setMinValue(0);

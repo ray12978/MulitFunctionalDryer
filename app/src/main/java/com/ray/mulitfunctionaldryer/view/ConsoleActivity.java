@@ -8,7 +8,7 @@ import android.widget.TextView;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.ray.mulitfunctionaldryer.R;
 import com.ray.mulitfunctionaldryer.component.TimePickerDialog;
-import com.ray.mulitfunctionaldryer.util.BottomNavigation;
+import com.ray.mulitfunctionaldryer.component.BottomNavigation;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -16,7 +16,7 @@ import androidx.appcompat.widget.Toolbar;
 
 public class ConsoleActivity extends AppCompatActivity {
     /*******TimePicker*********/
-    private TimePickerDialog dialog = new TimePickerDialog(this);
+    private final TimePickerDialog dialog = new TimePickerDialog(this);
     private TextView TimerText;
 
     @Override
@@ -54,13 +54,16 @@ public class ConsoleActivity extends AppCompatActivity {
     }
 
     void TimerPicker() {
-        final int[] num = new int[3];
+        final int[] num = new int[4];
         dialog.onDialogRespond = new TimePickerDialog.OnDialogRespond() {
             @Override
             public void onRespond(int times) {
                 num[0] = times / 10000;
                 num[1] = times % 10000 / 100;
                 num[2] = times % 100;
+                int timeSet = Math.min(times, 999);
+                //TODO Save time value to bluetooth string
+
             }
 
             @SuppressLint("DefaultLocale")

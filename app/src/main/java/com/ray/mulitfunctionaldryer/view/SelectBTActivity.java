@@ -20,7 +20,7 @@ import android.widget.TextView;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.ray.mulitfunctionaldryer.R;
-import com.ray.mulitfunctionaldryer.util.BottomNavigation;
+import com.ray.mulitfunctionaldryer.component.BottomNavigation;
 
 import java.util.HashSet;
 import java.util.Set;
