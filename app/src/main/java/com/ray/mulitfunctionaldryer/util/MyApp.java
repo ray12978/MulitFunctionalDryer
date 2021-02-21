@@ -183,8 +183,7 @@ public class MyApp extends Application {
 
     public void StrProcess() {
         int b = 0;
-        //BTValTmp = new StringBuffer("S123M456T789P147"); //test
-        //BTValTmp = new StringBuffer("B1"); //test
+
         if (BTValTmp.length() == 0) return;
         if (BTValTmp.toString().charAt(0) == BT_FIRST_CHAR) {
             for (int i = 0; i < BTValTmp.length(); i++) {

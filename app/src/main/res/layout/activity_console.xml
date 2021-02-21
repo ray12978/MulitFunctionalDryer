@@ -2,41 +2,19 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/TimeModeCheck"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <TextView
-        android:id="@+id/textView7"
+    <CheckBox
+        android:id="@+id/checkBox"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginTop="32dp"
-        android:text="定時時間設定"
-        android:textSize="20sp"
+        android:text="不使用定時功能，直接啟動直到下次關閉"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/ForRBtnOn" />
-
-    <TextView
-        android:id="@+id/textView6"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="32dp"
-        android:text="水霧功能設定"
-        android:textSize="20sp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/Dryer2RBtn1" />
-
-    <TextView
-        android:id="@+id/textView5"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="24dp"
-        android:layout_marginTop="24dp"
-        android:text="段"
-        android:textSize="20sp"
-        app:layout_constraintStart_toEndOf="@+id/Dryer2RBtn3"
-        app:layout_constraintTop_toBottomOf="@+id/textView3" />
+        app:layout_constraintTop_toBottomOf="@+id/textView7" />
 
     <RadioButton
         android:id="@+id/Dryer1RBtn1"
@@ -121,49 +99,38 @@
         app:layout_constraintStart_toEndOf="@+id/Dryer2RBtn2"
         app:layout_constraintTop_toBottomOf="@+id/textView3" />
 
-    <com.ray.mulitfunctionaldryer.component.blRadioGroup
-        android:id="@+id/DryerRG1"
-        android:layout_width="0dp"
-        android:layout_height="200dp"
-        app:constraint_referenced_ids="Dryer1RBtn1,Dryer1RBtn2,Dryer1RBtn3"
-        app:layout_constraintBottom_toTopOf="@+id/Bottom_Main"
-        app:layout_constraintEnd_toEndOf="parent"
+    <TextView
+        android:id="@+id/textView7"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="32dp"
+        android:text="定時時間設定"
+        android:textSize="20sp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/include" />
+        app:layout_constraintTop_toBottomOf="@+id/ForRBtnOn" />
 
-    <com.ray.mulitfunctionaldryer.component.blRadioGroup
-        android:id="@+id/DryerRG2"
-        android:layout_width="0dp"
-        android:layout_height="200dp"
-        app:constraint_referenced_ids="Dryer2RBtn1,Dryer2RBtn2,Dryer2RBtn3"
-        app:layout_constraintBottom_toTopOf="@+id/Bottom_Main"
-        app:layout_constraintEnd_toEndOf="parent"
+    <TextView
+        android:id="@+id/textView6"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="32dp"
+        android:text="水霧功能設定"
+        android:textSize="20sp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/include" />
+        app:layout_constraintTop_toBottomOf="@+id/Dryer2RBtn1" />
 
-    <com.ray.mulitfunctionaldryer.component.blRadioGroup
-        android:id="@+id/FogRG"
-        android:layout_width="0dp"
-        android:layout_height="200dp"
-        app:constraint_referenced_ids="ForRBtnOn,ForRBtnOff"
-        app:layout_constraintBottom_toTopOf="@+id/Bottom_Main"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/include" />
-
-    <include
-        android:id="@+id/Bottom_Main"
-        layout="@layout/bottom_nav_view"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
-
-    <include
-        android:id="@+id/include"
-        layout="@layout/appbar"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+    <TextView
+        android:id="@+id/textView5"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="24dp"
+        android:text="段"
+        android:textSize="20sp"
+        app:layout_constraintStart_toEndOf="@+id/Dryer2RBtn3"
+        app:layout_constraintTop_toBottomOf="@+id/textView3" />
 
     <TextView
         android:id="@+id/textView2"
@@ -208,6 +175,69 @@
         android:textSize="40sp"
         app:layout_constraintStart_toEndOf="@+id/textView7"
         app:layout_constraintTop_toBottomOf="@+id/ForRBtnOff" />
+
+    <com.ray.mulitfunctionaldryer.component.blRadioGroup
+        android:id="@+id/DryerRG1"
+        android:layout_width="0dp"
+        android:layout_height="200dp"
+        app:constraint_referenced_ids="Dryer1RBtn1,Dryer1RBtn2,Dryer1RBtn3"
+        app:layout_constraintBottom_toTopOf="@+id/Bottom_Main"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/include" />
+
+    <com.ray.mulitfunctionaldryer.component.blRadioGroup
+        android:id="@+id/DryerRG2"
+        android:layout_width="0dp"
+        android:layout_height="200dp"
+        app:constraint_referenced_ids="Dryer2RBtn1,Dryer2RBtn2,Dryer2RBtn3"
+        app:layout_constraintBottom_toTopOf="@+id/Bottom_Main"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/include" />
+
+    <com.ray.mulitfunctionaldryer.component.blRadioGroup
+        android:id="@+id/FogRG"
+        android:layout_width="0dp"
+        android:layout_height="200dp"
+        app:constraint_referenced_ids="ForRBtnOn,ForRBtnOff"
+        app:layout_constraintBottom_toTopOf="@+id/Bottom_Main"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/include" />
+
+    <include
+        android:id="@+id/Bottom_Main"
+        layout="@layout/bottom_nav_view"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <include
+        android:id="@+id/include"
+        layout="@layout/appbar"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/button"
+        android:layout_width="100sp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="72dp"
+        android:layout_marginTop="24dp"
+        android:text="啟動"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/checkBox" />
+
+    <Button
+        android:id="@+id/button2"
+        android:layout_width="100sp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="72dp"
+        android:text="取消動作"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/button" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

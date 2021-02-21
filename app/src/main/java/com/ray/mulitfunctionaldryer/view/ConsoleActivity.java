@@ -9,6 +9,7 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.ray.mulitfunctionaldryer.R;
 import com.ray.mulitfunctionaldryer.component.TimePickerDialog;
 import com.ray.mulitfunctionaldryer.component.BottomNavigation;
+import com.ray.mulitfunctionaldryer.util.MyApp;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -18,6 +19,7 @@ public class ConsoleActivity extends AppCompatActivity {
     /*******TimePicker*********/
     private final TimePickerDialog dialog = new TimePickerDialog(this);
     private TextView TimerText;
+    private MyApp MyAppInst = MyApp.getAppInstance();
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -42,7 +44,7 @@ public class ConsoleActivity extends AppCompatActivity {
 
     private void setToolbar() {
         Toolbar toolbar = findViewById(R.id.toolbar);
-        toolbar.setTitle("定時模式");
+        toolbar.setTitle("定時模式設定");
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setHomeButtonEnabled(true);
