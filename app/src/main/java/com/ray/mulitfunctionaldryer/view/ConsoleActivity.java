@@ -19,7 +19,7 @@ public class ConsoleActivity extends AppCompatActivity {
     /*******TimePicker*********/
     private final TimePickerDialog dialog = new TimePickerDialog(this);
     private TextView TimerText;
-    private MyApp MyAppInst = MyApp.getAppInstance();
+    private final MyApp MyAppInst = MyApp.getAppInstance();
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -72,7 +72,6 @@ public class ConsoleActivity extends AppCompatActivity {
             @Override
             public void onResult(boolean ans) {
                 if (ans) {
-                    if (num == null) return;
                     String hours = String.format("0%d:", num[0]);
                     String minutes = num[1] >= 10 ? String.format("%d:", num[1]) : String.format("0%d:", num[1]);
                     String seconds = num[2] >= 10 ? String.format("%d", num[2]) : String.format("0%d", num[2]);

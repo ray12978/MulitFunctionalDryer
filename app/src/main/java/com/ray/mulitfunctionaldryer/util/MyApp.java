@@ -18,6 +18,7 @@ import com.github.ivbaranov.rxbluetooth.BluetoothConnection;
 import com.github.ivbaranov.rxbluetooth.RxBluetooth;
 
 import androidx.annotation.NonNull;
+
 import io.reactivex.Observable;
 import io.reactivex.ObservableEmitter;
 import io.reactivex.ObservableOnSubscribe;
@@ -26,7 +27,6 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
-
 
 
 public class MyApp extends Application {
@@ -57,6 +57,8 @@ public class MyApp extends Application {
     //Flag
     public FlagAddress BTRevSta = new FlagAddress(false);
     public FlagAddress BTRevFlag = new FlagAddress(false);
+
+    public OnConnectedDevice onConnectedDevice;
     /**
      * NOTIFY
      **/
@@ -73,7 +75,7 @@ public class MyApp extends Application {
      * Strings
      */
 
-    public String TempVal,WaterVal;
+    public String TempVal, WaterVal;
     private int[] StrPosition = new int[2];
     private final int BTMsgLen = 7;
 
@@ -115,6 +117,10 @@ public class MyApp extends Application {
         }
     }
 
+    public interface OnConnectedDevice {
+        void OnConnected(boolean ans) throws Exception;
+    }
+
     public boolean connDevice(BluetoothDevice device) {
         AtomicBoolean Sta = new AtomicBoolean(false);
         compositeDisposable.add(rxBluetooth.connectAsClient(device, serialPortUUID)
@@ -129,20 +135,33 @@ public class MyApp extends Application {
                             ReadBT();
                             //AutoWriteBT();
                             Sta.set(true);
+                            try {
+                                onConnectedDevice.OnConnected(true);
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
                         }, throwable -> {
                             // On error
                             System.out.println("error");
                             Sta.set(false);
+                            try {
+                            onConnectedDevice.OnConnected(false);
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
                             //System.out.println(ConnAct.getDevice().getName());
                             //System.out.println(ConnAct.getDevice().getAddress());
                         }));
         return Sta.get();
     }
+
+
     protected void WriteBT(String Msg) throws Exception {
         BluetoothConnection blueConn = new BluetoothConnection(socket);
         blueConn.send(Msg); // String
         System.out.println("Now Send:" + Msg);
     }
+
     private void ReadBT() throws Exception {
         BluetoothConnection bluetoothConnection = new BluetoothConnection(socket);
         compositeDisposable.add(bluetoothConnection.observeByteStream()
@@ -193,8 +212,8 @@ public class MyApp extends Application {
                 }
             }
             //System.out.println( BTValTmp.toString()+','+StrPosition[1]+','+StrPosition[2]);
-            TempVal = BTValTmp.toString().substring(StrPosition[0] + 1, StrPosition[0]+3).trim();
-            WaterVal = BTValTmp.toString().substring(StrPosition[0] + 3, StrPosition[1]-1).trim();
+            TempVal = BTValTmp.toString().substring(StrPosition[0] + 1, StrPosition[0] + 3).trim();
+            WaterVal = BTValTmp.toString().substring(StrPosition[0] + 3, StrPosition[1] - 1).trim();
         }
     }
 
@@ -213,6 +232,7 @@ public class MyApp extends Application {
 
         //System.out.println("Shared BTval!");
     }
+
     /**
      * 創建觀察者，觀察藍芽字串
      */

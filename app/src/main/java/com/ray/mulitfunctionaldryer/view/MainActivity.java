@@ -8,10 +8,13 @@ import android.bluetooth.BluetoothDevice;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.os.PersistableBundle;
 import android.util.Log;
+import android.view.Menu;
 import android.widget.TextView;
 import android.widget.Toolbar;
 
+import com.github.ivbaranov.rxbluetooth.RxBluetooth;
 import com.github.mikephil.charting.animation.Easing;
 import com.github.mikephil.charting.charts.PieChart;
 import com.github.mikephil.charting.data.PieData;
@@ -27,11 +30,20 @@ import com.ray.mulitfunctionaldryer.util.MyApp;
 
 import java.util.ArrayList;
 
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.schedulers.Schedulers;
+
 public class MainActivity extends AppCompatActivity {
     public StringBuffer BTSendMsg = new StringBuffer("$NND00N000O"); //[0]StartBit[1]Lock{L,F,N},[2]SpeedTen,[3]SpeedUnit,[4]SpeedConfirm,[5]Laser{T,J,N},[6]Buzzer{E,N},[7]CloudMode{Y,N}
     private final int BT_MSG_LEN = 11;
+
+    /**
+     * View
+     */
     private WaterPieChart waterPieChart;
-    private TextView DryerInfoText;
+    private TextView DryerInfoText, DryerStaText;
+    private MaterialToolbar materialToolbar;
 
 
     String TAG = "Dryer";
@@ -46,6 +58,13 @@ public class MainActivity extends AppCompatActivity {
      */
     private String BTAddress, BTName;
     private BluetoothAdapter bluetoothAdapter;
+    private boolean isConnected;
+
+    /**
+     * RxJava
+     */
+    private final CompositeDisposable compositeDisposable = new CompositeDisposable();
+    private final RxBluetooth rxBluetooth = new RxBluetooth(this);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,6 +74,13 @@ public class MainActivity extends AppCompatActivity {
         Initialize();
 
 
+    }
+
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState, @NonNull PersistableBundle outPersistentState) {
+        outState.putString("",);
+
+        super.onSaveInstanceState(outState, outPersistentState);
     }
 
     private void Initialize() {
@@ -67,7 +93,7 @@ public class MainActivity extends AppCompatActivity {
         BTName = deviceName;
         bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
 
-        PieChart pieChart = (PieChart) findViewById(R.id.piechart);
+        PieChart pieChart = findViewById(R.id.piechart);
         waterPieChart = new WaterPieChart(pieChart);
         waterPieChart.InitChart();
         waterPieChart.setPieChartValue(35.8f);//test
@@ -76,16 +102,42 @@ public class MainActivity extends AppCompatActivity {
         InitToolbar();
 
         DryerInfoText = findViewById(R.id.DryerInfoTV);
-        setDryerInfo(BTName);
+        DryerStaText = findViewById(R.id.DryerStaTV);
 
+        setDryerInfoText(BTName);
 
+        InitEvent();
     }
 
-    private void setDryerInfo(@NonNull String BTname){
-        if(BTname.equals("MainDryer"))
+    @Override
+    protected void onStart() {
+        setBTStatus();
+        super.onStart();
+    }
+
+    private void setDryerInfoText(@NonNull String BTname) {
+        if (BTname.equals("DryerMain"))
             DryerInfoText.setText("主吹風裝置");
-        if(BTname.equals(""))//TODO change condition
-            DryerInfoText.setText("副吹風裝置");
+        else if (BTname.equals("DryerExtend"))
+            DryerInfoText.setText("子吹風裝置");
+        else DryerInfoText.setText("不支援的裝置");
+    }
+
+    private void setDryerSta(boolean connected) {
+        if (connected) {
+            DryerStaText.setText("吹風裝置已連線");
+            isConnected = true;
+        }
+        if (!connected) {
+            DryerStaText.setText("吹風裝置尚未連線");
+            isConnected = false;
+        }
+    }
+
+    private void setBTStatus(){
+        MyAppInst.onConnectedDevice = ans -> {
+            isConnected = ans;
+        };
     }
 
     private void BottomNavInit() {
@@ -100,19 +152,61 @@ public class MainActivity extends AppCompatActivity {
                 .apply();
     }
 
-    private void InitToolbar(){
-        MaterialToolbar materialToolbar = findViewById(R.id.topAppBar);
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+
+        if(isConnected)menu.findItem(R.id.ConnBT).setIcon(R.drawable.drawable_bluetooth_connected);
+        if(!isConnected)menu.findItem(R.id.ConnBT).setIcon(R.drawable.drawable_bluetooth_white);
+        return super.onPrepareOptionsMenu(menu);
+    }
+
+    private void InitToolbar() {
+        materialToolbar = findViewById(R.id.topAppBar);
 
         materialToolbar.setOnMenuItemClickListener(item -> {
             int ID = item.getItemId();
-            if(ID == R.id.ConnBT){
-                Log.d(TAG,"ConnBT");
+            if (ID == R.id.ConnBT) {
+                if(!isConnected) item.setIcon(R.drawable.drawable_bluetooth_connected);
+                else item.setIcon(R.drawable.drawable_bluetooth_white);
+                Log.d(TAG, "ConnBT");
                 BluetoothDevice device = bluetoothAdapter.getRemoteDevice(BTAddress);
                 MyAppInst.connDevice(device);
-            }else if (ID == R.id.PageRefresh){
-                Log.d(TAG,"PageRefresh");
+            } else if (ID == R.id.PageRefresh) {
+                Log.d(TAG, "PageRefresh");
             }
             return false;
         });
+       // materialToolbar.setMenu();
+    }
+
+    private void InitEvent() {
+        /**
+         * get bluetooth Connection State
+         */
+        compositeDisposable.add(rxBluetooth.observeAclEvent()
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(Schedulers.io())
+                .subscribe(event -> {
+                    switch (event.getAction()) {
+                        case BluetoothDevice.ACTION_ACL_CONNECTED:
+                            Log.e(TAG, "Device is connected");
+                            //DpBTConnState(true);
+                            setDryerSta(true);
+                            break;
+                        case BluetoothDevice.ACTION_ACL_DISCONNECTED:
+                            Log.e(TAG, "Device is disconnected");
+                            //DpBTConnState(false);
+                            setDryerSta(false);
+                            break;
+                        case BluetoothDevice.ACTION_ACL_DISCONNECT_REQUESTED:
+                            Log.e(TAG, "Device is Requested disconnected");
+                            break;
+                        default:
+                            Log.e(TAG, "None Device");
+                            setDryerSta(false);
+                            break;
+
+                    }
+                }));
     }
 }
