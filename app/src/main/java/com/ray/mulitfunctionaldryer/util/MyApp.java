@@ -5,6 +5,7 @@ import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
 import android.content.SharedPreferences;
+import android.util.Log;
 import android.widget.Button;
 
 import java.io.IOException;
@@ -31,6 +32,7 @@ import io.reactivex.schedulers.Schedulers;
 
 public class MyApp extends Application {
     public static MyApp appInstance;
+    private static boolean isConnected;
 
     public static synchronized MyApp getAppInstance() {
         return appInstance;
@@ -58,6 +60,10 @@ public class MyApp extends Application {
     public FlagAddress BTRevSta = new FlagAddress(false);
     public FlagAddress BTRevFlag = new FlagAddress(false);
 
+    //boolean isConnected;
+
+
+    //Interface
     public OnConnectedDevice onConnectedDevice;
     /**
      * NOTIFY
@@ -85,6 +91,12 @@ public class MyApp extends Application {
     RxBluetooth rxBluetooth = new RxBluetooth(this);
     private CompositeDisposable compositeDisposable = new CompositeDisposable();
     AtomicInteger readCnt = new AtomicInteger();
+
+    /**
+     * RxUtils
+     */
+    private RxBtStreamTimer rxBtStreamTimer = new RxBtStreamTimer();
+
 
     @Override
     public void onCreate() {
@@ -121,6 +133,13 @@ public class MyApp extends Application {
         void OnConnected(boolean ans) throws Exception;
     }
 
+    public static boolean getConnected(){
+        return isConnected;
+    }
+    public static void isDisconnected(){
+        isConnected = false;
+    }
+
     public boolean connDevice(BluetoothDevice device) {
         AtomicBoolean Sta = new AtomicBoolean(false);
         compositeDisposable.add(rxBluetooth.connectAsClient(device, serialPortUUID)
@@ -133,7 +152,10 @@ public class MyApp extends Application {
                             //System.out.println( BTRevSta.Flag);
                             socket = bluetoothSocket;
                             ReadBT();
-                            //AutoWriteBT();
+                            //SubStreamEvent();
+                            sub();
+                            isConnected = true;
+
                             Sta.set(true);
                             try {
                                 onConnectedDevice.OnConnected(true);
@@ -142,6 +164,7 @@ public class MyApp extends Application {
                             }
                         }, throwable -> {
                             // On error
+                            isConnected = false;
                             System.out.println("error");
                             Sta.set(false);
                             try {
@@ -153,6 +176,11 @@ public class MyApp extends Application {
                             //System.out.println(ConnAct.getDevice().getAddress());
                         }));
         return Sta.get();
+    }
+    protected void SubStreamEvent(){
+        rxBtStreamTimer.interval(1000, number -> {
+            sub();
+        });
     }
 
 
@@ -198,6 +226,7 @@ public class MyApp extends Application {
         String a = new String(buffer, 0, count + 1);
         if (a.charAt(0) != BT_FIRST_CHAR) return;
         StrBufTmp.replace(0, count + 1, a);
+        //System.out.println(BTValTmp.toString());
     }
 
     public void StrProcess() {
@@ -205,7 +234,9 @@ public class MyApp extends Application {
 
         if (BTValTmp.length() == 0) return;
         if (BTValTmp.toString().charAt(0) == BT_FIRST_CHAR) {
+            System.out.println("first");
             for (int i = 0; i < BTValTmp.length(); i++) {
+                System.out.println(i);
                 if (BTValTmp.toString().getBytes()[i] > 57) {
                     StrPosition[b] = i;
                     if (b != StrPosition.length - 1) b++;
@@ -214,6 +245,8 @@ public class MyApp extends Application {
             //System.out.println( BTValTmp.toString()+','+StrPosition[1]+','+StrPosition[2]);
             TempVal = BTValTmp.toString().substring(StrPosition[0] + 1, StrPosition[0] + 3).trim();
             WaterVal = BTValTmp.toString().substring(StrPosition[0] + 3, StrPosition[1] - 1).trim();
+            Log.d("Temp",TempVal);
+            Log.d("Water",WaterVal);
         }
     }
 
@@ -249,10 +282,10 @@ public class MyApp extends Application {
                 BTSendMsg = BTWrData.getString("SendMsg", "null");
                 if (BTSendMsg.equals("null")) {
                     //System.out.println("Msg null");
-                    return;
+                    //return;
                 }
-
-                emitter.onNext(BTSendMsg);
+                emitter.onNext("$NND00N000O");
+                //emitter.onNext(BTSendMsg);
             }
 
             //System.out.println("信號發射：onComplete");
@@ -276,14 +309,15 @@ public class MyApp extends Application {
         @Override
         public void onNext(String string) {
             try {
-                if (readCnt.get() >= 9) {
+                //if (readCnt.get() >= 9) {
+                System.out.println("next");
                     WriteBT(string);
                     buffer = new byte[256];
                     readCnt = new AtomicInteger();
                     StrProcess();
                     BTValTmp.delete(0, BTValTmp.length());
                     SharedBTValue();
-                }
+                //}
             } catch (Exception e) {
                 e.printStackTrace();
             }

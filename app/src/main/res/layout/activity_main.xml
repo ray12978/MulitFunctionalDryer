@@ -12,7 +12,6 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="24dp"
         android:layout_marginTop="16dp"
-        android:text="DryerInfo"
         android:textSize="20sp"
         app:layout_constraintStart_toEndOf="@+id/DryerStaTV"
         app:layout_constraintTop_toBottomOf="@+id/appBarLayout2" />
@@ -41,12 +40,11 @@
 
     <TextView
         android:id="@+id/DryerStaTV"
-        android:layout_width="wrap_content"
+        android:layout_width="180sp"
         android:layout_height="wrap_content"
         android:layout_marginStart="50dp"
         android:layout_marginTop="16dp"
         android:textSize="20sp"
-        android:text="尚未連線吹風裝置"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/appBarLayout2" />
 

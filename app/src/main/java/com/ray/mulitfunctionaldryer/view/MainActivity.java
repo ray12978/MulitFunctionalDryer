@@ -34,8 +34,10 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.schedulers.Schedulers;
 
+import static com.ray.mulitfunctionaldryer.util.MyApp.getConnected;
+
 public class MainActivity extends AppCompatActivity {
-    public StringBuffer BTSendMsg = new StringBuffer("$NND00N000O"); //[0]StartBit[1]Lock{L,F,N},[2]SpeedTen,[3]SpeedUnit,[4]SpeedConfirm,[5]Laser{T,J,N},[6]Buzzer{E,N},[7]CloudMode{Y,N}
+    public StringBuffer BTSendMsg = new StringBuffer("$NND00N000O");
     private final int BT_MSG_LEN = 11;
 
     /**
@@ -66,21 +68,32 @@ public class MainActivity extends AppCompatActivity {
     private final CompositeDisposable compositeDisposable = new CompositeDisposable();
     private final RxBluetooth rxBluetooth = new RxBluetooth(this);
 
+    /**
+     * Testing saveInstance
+     */
+    String StrTest;
+    int IntTest;
+
+    //todo add button to test write bluetooth strings
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
 
+        if (null != savedInstanceState) {//因為Activity的生命周期原因 ，if 語句放著不一定能執行得到 應該結合實際情況
+
+            IntTest = savedInstanceState.getInt("IntTest");
+
+            StrTest = savedInstanceState.getString("StrTest");
+            System.out.println("getting");
+        }
+        setContentView(R.layout.activity_main);
         Initialize();
 
-
-    }
-
-    @Override
-    public void onSaveInstanceState(@NonNull Bundle outState, @NonNull PersistableBundle outPersistentState) {
-        outState.putString("",);
-
-        super.onSaveInstanceState(outState, outPersistentState);
+        Log.d("Act", "onCreate");
+        System.out.println("String:" + StrTest);
+        System.out.println("Int:" + IntTest);
     }
 
     private void Initialize() {
@@ -103,7 +116,8 @@ public class MainActivity extends AppCompatActivity {
 
         DryerInfoText = findViewById(R.id.DryerInfoTV);
         DryerStaText = findViewById(R.id.DryerStaTV);
-
+        if(MyApp.getConnected()) DryerStaText.setText("吹風裝置已連線");
+        else DryerStaText.setText("吹風裝置尚未連線");
         setDryerInfoText(BTName);
 
         InitEvent();
@@ -112,6 +126,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         setBTStatus();
+        Log.d("Act", "onStart");
         super.onStart();
     }
 
@@ -127,14 +142,17 @@ public class MainActivity extends AppCompatActivity {
         if (connected) {
             DryerStaText.setText("吹風裝置已連線");
             isConnected = true;
+            System.out.println("connected");
         }
         if (!connected) {
             DryerStaText.setText("吹風裝置尚未連線");
             isConnected = false;
+            System.out.println("not connected");
+            MyApp.isDisconnected();
         }
     }
 
-    private void setBTStatus(){
+    private void setBTStatus() {
         MyAppInst.onConnectedDevice = ans -> {
             isConnected = ans;
         };
@@ -154,9 +172,10 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
-
-        if(isConnected)menu.findItem(R.id.ConnBT).setIcon(R.drawable.drawable_bluetooth_connected);
-        if(!isConnected)menu.findItem(R.id.ConnBT).setIcon(R.drawable.drawable_bluetooth_white);
+        Log.d("Act", "onPrepareOptionsMenu");
+        if (isConnected)
+            menu.findItem(R.id.ConnBT).setIcon(R.drawable.drawable_bluetooth_connected);
+        if (!isConnected) menu.findItem(R.id.ConnBT).setIcon(R.drawable.drawable_bluetooth_white);
         return super.onPrepareOptionsMenu(menu);
     }
 
@@ -166,17 +185,22 @@ public class MainActivity extends AppCompatActivity {
         materialToolbar.setOnMenuItemClickListener(item -> {
             int ID = item.getItemId();
             if (ID == R.id.ConnBT) {
-                if(!isConnected) item.setIcon(R.drawable.drawable_bluetooth_connected);
-                else item.setIcon(R.drawable.drawable_bluetooth_white);
-                Log.d(TAG, "ConnBT");
-                BluetoothDevice device = bluetoothAdapter.getRemoteDevice(BTAddress);
-                MyAppInst.connDevice(device);
+                if (!BTAddress.equals("")) {
+
+                    System.out.println(BTAddress);
+                    if (!isConnected) item.setIcon(R.drawable.drawable_bluetooth_connected);
+                    else item.setIcon(R.drawable.drawable_bluetooth_white);
+                    Log.d(TAG, "ConnBT");
+
+                    BluetoothDevice device = bluetoothAdapter.getRemoteDevice(BTAddress);
+                    MyAppInst.connDevice(device);
+                }
             } else if (ID == R.id.PageRefresh) {
                 Log.d(TAG, "PageRefresh");
             }
             return false;
         });
-       // materialToolbar.setMenu();
+        // materialToolbar.setMenu();
     }
 
     private void InitEvent() {
