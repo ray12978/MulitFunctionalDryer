@@ -11,6 +11,6 @@
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
     <string name="menu">側邊欄</string>
-    <string name="radio_btn_title_1">吹風裝置1 段數</string>
-    <string name="radio_btn_title_2">吹風裝置2 段數</string>
+    <string name="radio_btn_title_1">吹風裝置1  段數</string>
+    <string name="radio_btn_title_2">吹風裝置2  段數</string>
 </resources>

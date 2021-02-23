@@ -17,8 +17,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import com.github.ivbaranov.rxbluetooth.BluetoothConnection;
 import com.github.ivbaranov.rxbluetooth.RxBluetooth;
-
-import androidx.annotation.NonNull;
+import com.ray.mulitfunctionaldryer.component.WaterPieChart;
 
 import io.reactivex.Observable;
 import io.reactivex.ObservableEmitter;
@@ -55,16 +54,37 @@ public class MyApp extends Application {
     public String DevAddress, DevName;
     private String TAG = "BTSta";
     protected String BTSendMsg;
-    char BT_FIRST_CHAR = 'M';
+    char MAIN_DRYER_FIRST_CHAR = 'M';
+    char EXTEND_DRYER_FIRST_CHAR = 'E';
     //Flag
     public FlagAddress BTRevSta = new FlagAddress(false);
-    public FlagAddress BTRevFlag = new FlagAddress(false);
+    public FlagAddress BTRevFlag = new FlagAddress(true);
+    public static int isMainDevice = 0;
 
+    /**
+     * Sensor value
+     */
+    public int TempIndex;
+    public int WaterIndex;
     //boolean isConnected;
 
 
-    //Interface
+    /**
+     * Interface
+     */
     public OnConnectedDevice onConnectedDevice;
+    public OnUpdateSensorVol onUpdateSensorVol = new OnUpdateSensorVol() {
+        @Override
+        public void OnWaterChange(int vol) {
+
+        }
+
+    @Override
+    public void OnTempChange(int val) {
+
+    }
+};
+
     /**
      * NOTIFY
      **/
@@ -82,7 +102,7 @@ public class MyApp extends Application {
      */
 
     public String TempVal, WaterVal;
-    private int[] StrPosition = new int[2];
+    private int[] StrPosition = new int[3];
     private final int BTMsgLen = 7;
 
     /**
@@ -95,7 +115,7 @@ public class MyApp extends Application {
     /**
      * RxUtils
      */
-    private RxBtStreamTimer rxBtStreamTimer = new RxBtStreamTimer();
+    private RxTimer rxTimer = new RxTimer();
 
 
     @Override
@@ -129,18 +149,18 @@ public class MyApp extends Application {
         }
     }
 
-    public interface OnConnectedDevice {
-        void OnConnected(boolean ans) throws Exception;
-    }
 
-    public static boolean getConnected(){
+
+
+    public static boolean getConnected() {
         return isConnected;
     }
-    public static void isDisconnected(){
+
+    public static void isDisconnected() {
         isConnected = false;
     }
 
-    public boolean connDevice(BluetoothDevice device) {
+    public void connDevice(BluetoothDevice device) {
         AtomicBoolean Sta = new AtomicBoolean(false);
         compositeDisposable.add(rxBluetooth.connectAsClient(device, serialPortUUID)
                 .observeOn(AndroidSchedulers.mainThread())
@@ -153,7 +173,7 @@ public class MyApp extends Application {
                             socket = bluetoothSocket;
                             ReadBT();
                             //SubStreamEvent();
-                            sub();
+                            //sub();
                             isConnected = true;
 
                             Sta.set(true);
@@ -168,23 +188,23 @@ public class MyApp extends Application {
                             System.out.println("error");
                             Sta.set(false);
                             try {
-                            onConnectedDevice.OnConnected(false);
+                                onConnectedDevice.OnConnected(false);
                             } catch (Exception e) {
                                 e.printStackTrace();
                             }
                             //System.out.println(ConnAct.getDevice().getName());
                             //System.out.println(ConnAct.getDevice().getAddress());
                         }));
-        return Sta.get();
     }
-    protected void SubStreamEvent(){
-        rxBtStreamTimer.interval(1000, number -> {
+
+    protected void SubStreamEvent() {
+        rxTimer.interval(1000, number -> {
             sub();
         });
     }
 
 
-    protected void WriteBT(String Msg) throws Exception {
+    public void WriteBT(String Msg) throws Exception {
         BluetoothConnection blueConn = new BluetoothConnection(socket);
         blueConn.send(Msg); // String
         System.out.println("Now Send:" + Msg);
@@ -196,20 +216,22 @@ public class MyApp extends Application {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeOn(Schedulers.io())
                 .subscribe(aByte -> {
-                    //buffer[i] = aByte;
                     SavByte(readCnt.get(), aByte);
                     SaveVal(BTValTmp, readCnt.get());
                     readCnt.getAndIncrement();
-                    BTRevSta.Flag = true;
+                    StrProcess(BTValTmp);
+
+                    //BTRevSta.Flag = true;
                     // This will be called every single byte received
                     //System.out.print("Recv byte:");
                     //System.out.println(aByte);
-                    BTRevFlag.Flag = true;
+                    //BTRevFlag.Flag = true;
                     //SavByte(aByte);
                     //System.out.println(Arrays.toString(buffer));
                     //System.out.println(buffer[buffer.length-1]);
                 }, throwable -> {
                     BTRevSta.Flag = false;
+                    throwable.printStackTrace();
                     // Error occured
                     System.out.println("Recv byte Error");
                 }));
@@ -217,37 +239,79 @@ public class MyApp extends Application {
     }
 
     protected void SavByte(int count, byte BTByte) {
-        buffer[count] = BTByte;
+        if (BTByte < 90)
+            buffer[count] = BTByte;
     }
 
-    public void SaveVal(@NonNull StringBuffer StrBufTmp, int count) {
+    public void SaveVal(StringBuffer StrBufTmp, int count) {
         if (buffer == null) return;
-
         String a = new String(buffer, 0, count + 1);
-        if (a.charAt(0) != BT_FIRST_CHAR) return;
+
+        if (a.charAt(0) != MAIN_DRYER_FIRST_CHAR) {
+            System.out.println(a);
+            System.out.println("not m return");
+            return;
+        }
         StrBufTmp.replace(0, count + 1, a);
         //System.out.println(BTValTmp.toString());
     }
 
-    public void StrProcess() {
+    public void StrProcess(StringBuffer strBuffer) {
         int b = 0;
 
         if (BTValTmp.length() == 0) return;
-        if (BTValTmp.toString().charAt(0) == BT_FIRST_CHAR) {
-            System.out.println("first");
-            for (int i = 0; i < BTValTmp.length(); i++) {
-                System.out.println(i);
-                if (BTValTmp.toString().getBytes()[i] > 57) {
+        if (strBuffer.toString().charAt(0) == MAIN_DRYER_FIRST_CHAR) {
+            //System.out.println("first");
+            for (int i = 0; i < strBuffer.length(); i++) {
+                //System.out.println(i);
+                if (strBuffer.toString().getBytes()[i] > 57) {
                     StrPosition[b] = i;
                     if (b != StrPosition.length - 1) b++;
                 }
             }
-            //System.out.println( BTValTmp.toString()+','+StrPosition[1]+','+StrPosition[2]);
-            TempVal = BTValTmp.toString().substring(StrPosition[0] + 1, StrPosition[0] + 3).trim();
-            WaterVal = BTValTmp.toString().substring(StrPosition[0] + 3, StrPosition[1] - 1).trim();
-            Log.d("Temp",TempVal);
-            Log.d("Water",WaterVal);
+            if (strBuffer.toString().charAt(StrPosition[1]) == 'O') {
+
+                TempVal = strBuffer.toString().substring(StrPosition[0] + 1, StrPosition[0] + 3).trim();
+                WaterVal = strBuffer.toString().substring(StrPosition[0] + 3, StrPosition[1]).trim();
+                Log.d("Temp", TempVal);
+                Log.d("Water", WaterVal);
+                if (TempVal.length()!=0 && WaterVal.length()!=0) {
+                   TempIndex = Integer.parseInt(TempVal);
+                   WaterIndex = Integer.parseInt(WaterVal);
+                    //onUpdateSensorVol.OnTempChange(TempIndex);
+                    //onUpdateSensorVol.OnWaterChange(WaterIndex);
+                    //onUpdateSensorVol.OnTempChange(123);
+                }
+
+                //strBuffer.delete(0, strBuffer.length());
+                ResetBuffer();
+            } else if (strBuffer.toString().charAt(StrPosition[1]) == 'T') {
+
+                switch (strBuffer.toString().charAt(StrPosition[2])) {
+                    case 'N':
+                        Log.d("BT", "normal end");
+                        break;
+                    case 'T':
+                        Log.d("BT", "temp high end");
+                        break;
+                    case 'C':
+                        Log.d("BT", "cancel end");
+                        break;
+                }
+                ResetBuffer();
+            }
+
+        } else if (BTValTmp.toString().charAt(0) == EXTEND_DRYER_FIRST_CHAR) {
+
         }
+    }
+
+    private void ResetBuffer() {
+        buffer = new byte[256];
+        readCnt = new AtomicInteger();
+        BTValTmp.delete(0, BTValTmp.length());
+        BTRevFlag.Flag = true;
+        StrPosition = new int[3];
     }
 
     private void SharedBTValue() {
@@ -311,12 +375,12 @@ public class MyApp extends Application {
             try {
                 //if (readCnt.get() >= 9) {
                 System.out.println("next");
-                    WriteBT(string);
-                    buffer = new byte[256];
-                    readCnt = new AtomicInteger();
-                    StrProcess();
-                    BTValTmp.delete(0, BTValTmp.length());
-                    SharedBTValue();
+                WriteBT(string);
+                buffer = new byte[256];
+                readCnt = new AtomicInteger();
+
+                BTValTmp.delete(0, BTValTmp.length());
+                SharedBTValue();
                 //}
             } catch (Exception e) {
                 e.printStackTrace();
@@ -347,4 +411,27 @@ public class MyApp extends Application {
             disposable[0].dispose();
     }
 
+    public int getTempIndex(){
+        return TempIndex;
+    }
+    public int getWaterIndex(){
+        return WaterIndex;
+    }
+    public static int getDeviceIndex() {
+        return isMainDevice;
+    }
+
+    public static void setDeviceIndex(int i){
+        isMainDevice = i;
+    }
+
+    public interface OnUpdateSensorVol {
+        void OnWaterChange(int vol);
+
+        void OnTempChange(int val);
+    }
+
+    public interface OnConnectedDevice {
+        void OnConnected(boolean ans) throws Exception;
+    }
 }

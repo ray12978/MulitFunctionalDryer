@@ -6,35 +6,30 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.content.SharedPreferences;
-import android.graphics.Color;
 import android.os.Bundle;
-import android.os.PersistableBundle;
 import android.util.Log;
 import android.view.Menu;
+import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toolbar;
 
 import com.github.ivbaranov.rxbluetooth.RxBluetooth;
-import com.github.mikephil.charting.animation.Easing;
 import com.github.mikephil.charting.charts.PieChart;
-import com.github.mikephil.charting.data.PieData;
-import com.github.mikephil.charting.data.PieDataSet;
-import com.github.mikephil.charting.data.PieEntry;
-import com.google.android.material.appbar.AppBarLayout;
 import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.android.material.snackbar.Snackbar;
 import com.ray.mulitfunctionaldryer.R;
 import com.ray.mulitfunctionaldryer.component.BottomNavigation;
 import com.ray.mulitfunctionaldryer.component.WaterPieChart;
 import com.ray.mulitfunctionaldryer.util.MyApp;
+import com.ray.mulitfunctionaldryer.util.RxTimer;
+import com.ray.mulitfunctionaldryer.util.RxWaterTimer;
 
-import java.util.ArrayList;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.schedulers.Schedulers;
-
-import static com.ray.mulitfunctionaldryer.util.MyApp.getConnected;
 
 public class MainActivity extends AppCompatActivity {
     public StringBuffer BTSendMsg = new StringBuffer("$NND00N000O");
@@ -44,15 +39,15 @@ public class MainActivity extends AppCompatActivity {
      * View
      */
     private WaterPieChart waterPieChart;
-    private TextView DryerInfoText, DryerStaText;
+    private TextView DryerInfoText, DryerStaText, TempView;
     private MaterialToolbar materialToolbar;
-
+    private ImageView BTLight;
 
     String TAG = "Dryer";
     /**
      * SharedPreferences
      **/
-    private SharedPreferences BTWrData;
+    private SharedPreferences SensorManager;
     private final MyApp MyAppInst = MyApp.getAppInstance();
 
     /**
@@ -67,7 +62,8 @@ public class MainActivity extends AppCompatActivity {
      */
     private final CompositeDisposable compositeDisposable = new CompositeDisposable();
     private final RxBluetooth rxBluetooth = new RxBluetooth(this);
-
+    private final RxTimer rxTimer1 = new RxTimer();
+    private final RxTimer rxTimer2 = new RxTimer();
     /**
      * Testing saveInstance
      */
@@ -94,10 +90,24 @@ public class MainActivity extends AppCompatActivity {
         Log.d("Act", "onCreate");
         System.out.println("String:" + StrTest);
         System.out.println("Int:" + IntTest);
+        timer();
+    }
+
+    void timer() {
+        AtomicInteger i = new AtomicInteger();
+        AtomicInteger a = new AtomicInteger(5);
+        rxTimer1.interval(1000, number -> {
+            if (MyApp.getConnected()) UpdateSensorData();
+        });
+        rxTimer2.interval(2000, number -> {
+            System.out.println(a.getAndIncrement());
+        });
     }
 
     private void Initialize() {
-        BTWrData = getSharedPreferences("BTMsg", MODE_PRIVATE);
+        SensorManager = getSharedPreferences("SensorVal", MODE_PRIVATE);
+        float initWater = SensorManager.getFloat("water", 0);
+        int initTemperature = SensorManager.getInt("temp", 0);
         final String deviceName = getSharedPreferences("BTDetail", MODE_PRIVATE)
                 .getString("Name", "尚未選擇裝置");
         final String deviceAddress = getSharedPreferences("BTDetail", MODE_PRIVATE)
@@ -105,48 +115,99 @@ public class MainActivity extends AppCompatActivity {
         BTAddress = deviceAddress;
         BTName = deviceName;
         bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
-
+        TempView = findViewById(R.id.TempTV);
         PieChart pieChart = findViewById(R.id.piechart);
         waterPieChart = new WaterPieChart(pieChart);
         waterPieChart.InitChart();
-        waterPieChart.setPieChartValue(35.8f);//test
-
+        waterPieChart.setPieChartValue(initWater);//test
+        TempView.setText(String.valueOf(initTemperature));
         BottomNavInit();
         InitToolbar();
+        BTLight = findViewById(R.id.BTStaLight);
 
         DryerInfoText = findViewById(R.id.DryerInfoTV);
         DryerStaText = findViewById(R.id.DryerStaTV);
-        if(MyApp.getConnected()) DryerStaText.setText("吹風裝置已連線");
-        else DryerStaText.setText("吹風裝置尚未連線");
-        setDryerInfoText(BTName);
 
+        setDryerInfoText(BTName);
+        initDryerSta();
         InitEvent();
+    }
+
+    void UpdateSensorData() {
+
+        int TempValue = MyAppInst.getTempIndex();
+        Integer WaterVolume = MyAppInst.getWaterIndex();
+        System.out.println(WaterVolume);
+        float f = WaterVolume.floatValue() / 750 * 100;
+        if (f != 0 && TempValue != 0) {
+            waterPieChart.setPieChartValue(f);
+            TempView.setText(String.valueOf(TempValue));
+            SensorManager.edit()
+                    .putFloat("water", f)
+                    .putInt("temp", TempValue)
+                    .apply();
+        }
+
+        System.out.println("update!");
+
+    }
+
+    private void makeSnack(String msg) {
+        Snackbar snackbar = Snackbar.make(DryerInfoText, msg, Snackbar.LENGTH_LONG)
+                .setAction("OK", new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        Log.i("SNACKBAR", "OK");
+                    }
+                });
+        snackbar.show();
     }
 
     @Override
     protected void onStart() {
         setBTStatus();
-        Log.d("Act", "onStart");
+        if (!MyApp.getConnected()) makeSnack("請先連線吹風裝置");
         super.onStart();
     }
 
+    private void initDryerSta() {
+        if (MyApp.getConnected()) {
+            DryerStaText.setText("吹風裝置已連線");
+            BTLight.setImageResource(R.drawable.drawable_circle);
+        } else {
+            DryerStaText.setText("吹風裝置尚未連線");
+            BTLight.setImageResource(R.drawable.drawable_circle_gray);
+        }
+    }
+
     private void setDryerInfoText(@NonNull String BTname) {
-        if (BTname.equals("DryerMain"))
+        if (BTname.equals("DryerMain")){
             DryerInfoText.setText("主吹風裝置");
-        else if (BTname.equals("DryerExtend"))
+            MyApp.setDeviceIndex(1);
+        }
+
+        else if (BTname.equals("DryerExtend")){
             DryerInfoText.setText("子吹風裝置");
-        else DryerInfoText.setText("不支援的裝置");
+            MyApp.setDeviceIndex(2);
+        }
+
+        else{
+            DryerInfoText.setText("不支援的裝置");
+            MyApp.setDeviceIndex(0);
+        }
     }
 
     private void setDryerSta(boolean connected) {
         if (connected) {
             DryerStaText.setText("吹風裝置已連線");
             isConnected = true;
+            BTLight.setImageResource(R.drawable.drawable_circle);
             System.out.println("connected");
         }
         if (!connected) {
             DryerStaText.setText("吹風裝置尚未連線");
             isConnected = false;
+            BTLight.setImageResource(R.drawable.drawable_circle_gray);
             System.out.println("not connected");
             MyApp.isDisconnected();
         }
@@ -162,12 +223,6 @@ public class MainActivity extends AppCompatActivity {
         BottomNavigationView MyBtmNav = findViewById(R.id.Bottom_Main);
         BottomNavigation BtmNav = new BottomNavigation(this, MyBtmNav, 0);
         BtmNav.init();
-    }
-
-    void UpdateBTMsg() {
-        BTWrData.edit()
-                .putString("SendMsg", BTSendMsg.toString())
-                .apply();
     }
 
     @Override
@@ -186,17 +241,16 @@ public class MainActivity extends AppCompatActivity {
             int ID = item.getItemId();
             if (ID == R.id.ConnBT) {
                 if (!BTAddress.equals("")) {
-
                     System.out.println(BTAddress);
                     if (!isConnected) item.setIcon(R.drawable.drawable_bluetooth_connected);
                     else item.setIcon(R.drawable.drawable_bluetooth_white);
-                    Log.d(TAG, "ConnBT");
 
                     BluetoothDevice device = bluetoothAdapter.getRemoteDevice(BTAddress);
                     MyAppInst.connDevice(device);
                 }
             } else if (ID == R.id.PageRefresh) {
-                Log.d(TAG, "PageRefresh");
+
+                UpdateSensorData();
             }
             return false;
         });
