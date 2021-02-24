@@ -137,7 +137,7 @@ public class MainActivity extends AppCompatActivity {
         int WaterVolume = MyAppInst.getWaterIndex();
         float f = (float) WaterVolume / 750 * 100;
 
-        if (f <= 15 && !MyApp.WaterBeeped) {
+        if (f!=0 && f <= 15 && !MyApp.WaterBeeped) {
             MyAppInst.WaterEmptyNotify();
             MyApp.WaterBeeped = true;
         } else if (f > 15) MyApp.WaterBeeped = false;
