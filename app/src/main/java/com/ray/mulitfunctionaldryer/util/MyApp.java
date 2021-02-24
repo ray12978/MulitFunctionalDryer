@@ -1,23 +1,41 @@
 package com.ray.mulitfunctionaldryer.util;
 
+import android.annotation.SuppressLint;
 import android.app.Application;
+import android.app.Notification;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
+import android.content.ContentResolver;
+import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
+import android.media.AudioAttributes;
+import android.net.Uri;
+import android.os.Build;
+import android.text.format.DateFormat;
 import android.util.Log;
 import android.widget.Button;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.Calendar;
 import java.util.UUID;
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import com.github.ivbaranov.rxbluetooth.BluetoothConnection;
 import com.github.ivbaranov.rxbluetooth.RxBluetooth;
+import com.ray.mulitfunctionaldryer.R;
+import com.ray.mulitfunctionaldryer.component.TimePickerDialog;
 import com.ray.mulitfunctionaldryer.component.WaterPieChart;
+import com.ray.mulitfunctionaldryer.view.ConsoleActivity;
+import com.ray.mulitfunctionaldryer.view.MainActivity;
 
 import io.reactivex.Observable;
 import io.reactivex.ObservableEmitter;
@@ -43,47 +61,30 @@ public class MyApp extends Application {
     private final UUID serialPortUUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
     public StringBuffer BTValTmp = new StringBuffer();
 
-    public synchronized StringBuffer getBTVal() {
-        return BTValTmp;
-    }
-
     private BluetoothSocket socket;
     public InputStream inputStream = null;
     public OutputStream outputStream = null;
-    private BluetoothAdapter bluetoothAdapter;
-    public String DevAddress, DevName;
+
     private String TAG = "BTSta";
-    protected String BTSendMsg;
     char MAIN_DRYER_FIRST_CHAR = 'M';
     char EXTEND_DRYER_FIRST_CHAR = 'E';
     //Flag
     public FlagAddress BTRevSta = new FlagAddress(false);
     public FlagAddress BTRevFlag = new FlagAddress(true);
     public static int isMainDevice = 0;
-
+    public static boolean WaterBeeped = false;
+    public static boolean TempBeeped = false;
     /**
      * Sensor value
      */
     public int TempIndex;
     public int WaterIndex;
-    //boolean isConnected;
 
 
     /**
      * Interface
      */
     public OnConnectedDevice onConnectedDevice;
-    public OnUpdateSensorVol onUpdateSensorVol = new OnUpdateSensorVol() {
-        @Override
-        public void OnWaterChange(int vol) {
-
-        }
-
-    @Override
-    public void OnTempChange(int val) {
-
-    }
-};
 
     /**
      * NOTIFY
@@ -91,19 +92,12 @@ public class MyApp extends Application {
     private static final String TEST_NOTIFY_ID = "Dryer_Noti";
     private static final int NOTIFY_REQUEST_ID = 300;
 
-
-    /**
-     * SharedBTValue
-     */
-    private SharedPreferences BTWrData;
-    private SharedPreferences BTRevData;
     /**
      * Strings
-     */
+     **/
 
     public String TempVal, WaterVal;
     private int[] StrPosition = new int[3];
-    private final int BTMsgLen = 7;
 
     /**
      * RxBluetooth
@@ -113,10 +107,12 @@ public class MyApp extends Application {
     AtomicInteger readCnt = new AtomicInteger();
 
     /**
-     * RxUtils
-     */
-    private RxTimer rxTimer = new RxTimer();
-
+     * Timer
+     **/
+    static int[] TimeSaver = new int[4];
+    static String TimerString = "";
+    final RxTimer CountDownTimer = new RxTimer();
+    boolean isStarted = false;
 
     @Override
     public void onCreate() {
@@ -124,18 +120,13 @@ public class MyApp extends Application {
 
         appInstance = this;
 
-        bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
-
-        BTWrData = getSharedPreferences("BTMsg", MODE_PRIVATE);
-        BTSendMsg = BTWrData.getString("SendMsg", "null");
-        BTRevData = getSharedPreferences("BTRev", MODE_PRIVATE);
     }
 
     /**
      * BlueTooth
      **/
 
-    public void disconnect(Button BTBut) {
+    public void disconnect() {
         if (socket == null) return;
 
         try {
@@ -143,14 +134,63 @@ public class MyApp extends Application {
             socket = null;
             inputStream = null;
             outputStream = null;
-            BTBut.setText("未連線");
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
+    public void StartCount() {
+        if(!isStarted){
+            CountDownTimer.interval(1000, number -> {
+                TimerCountdown();
+            });
+            isStarted = true;
+        }
 
+    }
 
+    public void StopCount(){
+        isStarted = false;
+        CountDownTimer.cancel();
+    }
+
+    @SuppressLint("DefaultLocale")
+    private void TimerCountdown() {
+        if (TimeSaver[2] > 0) TimeSaver[2] -= 1;
+        else if (TimeSaver[1] > 0) {
+            TimeSaver[2] = 59;
+            TimeSaver[1] -= 1;
+        } else if (TimeSaver[0] > 0) {
+            TimeSaver[0] -= 1;
+            TimeSaver[1] = 59;
+        }
+        String hours = String.format("0%d:", TimeSaver[0]);
+        String minutes = TimeSaver[1] >= 10 ? String.format("%d:", TimeSaver[1]) : String.format("0%d:", TimeSaver[1]);
+        String seconds = TimeSaver[2] >= 10 ? String.format("%d", TimeSaver[2]) : String.format("0%d", TimeSaver[2]);
+        String times = "";
+
+        times = times.concat(hours);
+        times = times.concat(minutes);
+        times = times.concat(seconds);
+
+        TimerString = times;
+    }
+
+    public static void setTimeString(String s) {
+        TimerString = s;
+    }
+
+    public static String getTimeString() {
+        return TimerString;
+    }
+
+    public static void setTimeSaver(int[] times) {
+        TimeSaver = times;
+    }
+
+    public static int[] getTimeSaver() {
+        return TimeSaver;
+    }
 
     public static boolean getConnected() {
         return isConnected;
@@ -167,15 +207,10 @@ public class MyApp extends Application {
                 .subscribeOn(Schedulers.io())
                 .subscribe(
                         bluetoothSocket -> {
-                            // Connected to bluetooth device, do anything with the socket
                             System.out.println("conned");
-                            //System.out.println( BTRevSta.Flag);
                             socket = bluetoothSocket;
                             ReadBT();
-                            //SubStreamEvent();
-                            //sub();
                             isConnected = true;
-
                             Sta.set(true);
                             try {
                                 onConnectedDevice.OnConnected(true);
@@ -183,7 +218,6 @@ public class MyApp extends Application {
                                 e.printStackTrace();
                             }
                         }, throwable -> {
-                            // On error
                             isConnected = false;
                             System.out.println("error");
                             Sta.set(false);
@@ -192,21 +226,12 @@ public class MyApp extends Application {
                             } catch (Exception e) {
                                 e.printStackTrace();
                             }
-                            //System.out.println(ConnAct.getDevice().getName());
-                            //System.out.println(ConnAct.getDevice().getAddress());
                         }));
     }
 
-    protected void SubStreamEvent() {
-        rxTimer.interval(1000, number -> {
-            sub();
-        });
-    }
-
-
     public void WriteBT(String Msg) throws Exception {
         BluetoothConnection blueConn = new BluetoothConnection(socket);
-        blueConn.send(Msg); // String
+        blueConn.send(Msg);
         System.out.println("Now Send:" + Msg);
     }
 
@@ -220,19 +245,9 @@ public class MyApp extends Application {
                     SaveVal(BTValTmp, readCnt.get());
                     readCnt.getAndIncrement();
                     StrProcess(BTValTmp);
-
-                    //BTRevSta.Flag = true;
-                    // This will be called every single byte received
-                    //System.out.print("Recv byte:");
-                    //System.out.println(aByte);
-                    //BTRevFlag.Flag = true;
-                    //SavByte(aByte);
-                    //System.out.println(Arrays.toString(buffer));
-                    //System.out.println(buffer[buffer.length-1]);
                 }, throwable -> {
                     BTRevSta.Flag = false;
                     throwable.printStackTrace();
-                    // Error occured
                     System.out.println("Recv byte Error");
                 }));
         BTRevSta.Flag = false;
@@ -248,22 +263,18 @@ public class MyApp extends Application {
         String a = new String(buffer, 0, count + 1);
 
         if (a.charAt(0) != MAIN_DRYER_FIRST_CHAR) {
-            System.out.println(a);
-            System.out.println("not m return");
             return;
         }
         StrBufTmp.replace(0, count + 1, a);
-        //System.out.println(BTValTmp.toString());
     }
 
     public void StrProcess(StringBuffer strBuffer) {
         int b = 0;
 
         if (BTValTmp.length() == 0) return;
+        System.out.println(strBuffer);
         if (strBuffer.toString().charAt(0) == MAIN_DRYER_FIRST_CHAR) {
-            //System.out.println("first");
             for (int i = 0; i < strBuffer.length(); i++) {
-                //System.out.println(i);
                 if (strBuffer.toString().getBytes()[i] > 57) {
                     StrPosition[b] = i;
                     if (b != StrPosition.length - 1) b++;
@@ -275,34 +286,52 @@ public class MyApp extends Application {
                 WaterVal = strBuffer.toString().substring(StrPosition[0] + 3, StrPosition[1]).trim();
                 Log.d("Temp", TempVal);
                 Log.d("Water", WaterVal);
-                if (TempVal.length()!=0 && WaterVal.length()!=0) {
-                   TempIndex = Integer.parseInt(TempVal);
-                   WaterIndex = Integer.parseInt(WaterVal);
-                    //onUpdateSensorVol.OnTempChange(TempIndex);
-                    //onUpdateSensorVol.OnWaterChange(WaterIndex);
-                    //onUpdateSensorVol.OnTempChange(123);
+                if (TempVal.length() != 0 && WaterVal.length() != 0) {
+                    TempIndex = Integer.parseInt(TempVal);
+                    WaterIndex = Integer.parseInt(WaterVal);
                 }
-
-                //strBuffer.delete(0, strBuffer.length());
                 ResetBuffer();
-            } else if (strBuffer.toString().charAt(StrPosition[1]) == 'T') {
-
+            } else if (strBuffer.toString().charAt(StrPosition[1]) == 'T' && strBuffer.length() > 2) {
                 switch (strBuffer.toString().charAt(StrPosition[2])) {
                     case 'N':
                         Log.d("BT", "normal end");
+                        TimeModeEndNotify(getString(R.string.main_time_mode_notify_title), getString(R.string.end_reason_normal));
                         break;
                     case 'T':
                         Log.d("BT", "temp high end");
+                        TimeModeEndNotify(getString(R.string.main_time_mode_notify_title), getString(R.string.end_reason_temp));
                         break;
                     case 'C':
                         Log.d("BT", "cancel end");
+                        TimeModeEndNotify(getString(R.string.main_time_mode_notify_title), getString(R.string.end_reason_cancel));
                         break;
                 }
+                ConsoleActivity.isTiming = false;
+                StopCount();
                 ResetBuffer();
             }
-
         } else if (BTValTmp.toString().charAt(0) == EXTEND_DRYER_FIRST_CHAR) {
-
+            for (int i = 0; i < strBuffer.length(); i++) {
+                if (strBuffer.toString().getBytes()[i] > 57) {
+                    StrPosition[b] = i;
+                    if (b != StrPosition.length - 1) b++;
+                }
+            }
+            if (strBuffer.toString().charAt(StrPosition[1]) == 'T' && strBuffer.length() > 2) {
+                switch (strBuffer.toString().charAt(StrPosition[2])) {
+                    case 'N':
+                        Log.d("BT", "normal end");
+                        TimeModeEndNotify(getString(R.string.extend_time_mode_notify_title), getString(R.string.end_reason_normal));
+                        break;
+                    case 'C':
+                        Log.d("BT", "cancel end");
+                        TimeModeEndNotify(getString(R.string.extend_time_mode_notify_title), getString(R.string.end_reason_cancel));
+                        break;
+                }
+                StopCount();
+                ConsoleActivity.isTiming = false;
+                ResetBuffer();
+            }
         }
     }
 
@@ -314,121 +343,168 @@ public class MyApp extends Application {
         StrPosition = new int[3];
     }
 
-    private void SharedBTValue() {
-        int TempIntVal;
-        if (TempVal == null || TempVal.equals("")) TempIntVal = 0;
-        else TempIntVal = Integer.parseInt(TempVal);
-        int WaterIntVal;
-        if (WaterVal == null || WaterVal.equals("")) WaterIntVal = 0;
-        else WaterIntVal = Integer.parseInt(WaterVal);
+    public void WaterEmptyNotify() {
+        Log.d(TAG, "WaterEmptyNotify: ");
+        try {
+            Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+            intent.putExtra("noti_id", NOTIFY_REQUEST_ID);
+            PendingIntent pendingIntent = PendingIntent.getActivity(getApplicationContext(),
+                    NOTIFY_REQUEST_ID,
+                    intent,
+                    PendingIntent.FLAG_UPDATE_CURRENT);
 
-        BTRevData.edit()
-                .putInt("Water", WaterIntVal)
-                .putInt("Temp", TempIntVal)
-                .apply();
+            NotificationManager manager = (NotificationManager) getApplicationContext().getSystemService(NOTIFICATION_SERVICE);
+            Notification.Builder builder = new Notification.Builder(this)
+                    .setWhen(System.currentTimeMillis())
+                    .setContentTitle(getString(R.string.water_notify_title))
+                    .setContentText(getString(R.string.water_notify_text))
+                    .setShowWhen(true)
+                    .setLights(0xff00ff00, 300, 1000)
+                    .setSmallIcon(R.drawable.drawable_water_drop)
+                    .setDefaults(Notification.DEFAULT_LIGHTS | Notification.DEFAULT_VIBRATE)
+                    .setDefaults(Notification.DEFAULT_VIBRATE)
+                    .setDefaults(Notification.DEFAULT_SOUND)
+                    .setContentIntent(pendingIntent)
+                    .setAutoCancel(true);
 
-        //System.out.println("Shared BTval!");
-    }
+            NotificationChannel channel;
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                channel = new NotificationChannel(TEST_NOTIFY_ID
+                        , "Water Empty"
+                        , NotificationManager.IMPORTANCE_HIGH);
+                channel.enableLights(true);
+                channel.enableVibration(true);
+                channel.shouldShowLights();
+                channel.setLightColor(Color.GREEN);
+                channel.setLockscreenVisibility(Notification.VISIBILITY_PUBLIC);
+                builder.setChannelId(TEST_NOTIFY_ID);
 
-    /**
-     * 創建觀察者，觀察藍芽字串
-     */
-    ObservableOnSubscribe<String> observableOnSubscribe = new ObservableOnSubscribe<String>() {
-        @Override
-        public void subscribe(ObservableEmitter<String> emitter) {
-            //System.out.println("已經訂閱：subscribe，获取发射器");
-            // if (RxLocation != null)
-            //    emitter.onNext(RxLocation);
-            //
-            if (BTRevFlag.Flag) {
-
-                if (BTSendMsg == null) return;
-                BTSendMsg = BTWrData.getString("SendMsg", "null");
-                if (BTSendMsg.equals("null")) {
-                    //System.out.println("Msg null");
-                    //return;
-                }
-                emitter.onNext("$NND00N000O");
-                //emitter.onNext(BTSendMsg);
+                manager.createNotificationChannel(channel);
+            } else {
+                builder.setDefaults(Notification.DEFAULT_ALL)
+                        .setVisibility(Notification.VISIBILITY_PUBLIC);
             }
+            int testNotifyId = 12;
+            manager.notify(testNotifyId,
+                    builder.build());
+        } catch (Exception e) {
 
-            //System.out.println("信號發射：onComplete");
         }
-    };
+    }
 
-    /**
-     * 创建被观察者，并带上被观察者的订阅
-     */
-    Observable<String> observable = Observable.create(observableOnSubscribe);
+    public void TempHighNotify() {
+        Log.d(TAG, "TempHighNotify: ");
+        try {
+            Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+            intent.putExtra("noti_id", NOTIFY_REQUEST_ID);
+            PendingIntent pendingIntent = PendingIntent.getActivity(getApplicationContext(),
+                    NOTIFY_REQUEST_ID,
+                    intent,
+                    PendingIntent.FLAG_UPDATE_CURRENT);
 
-    final Disposable[] disposable = new Disposable[1];
+            NotificationManager manager = (NotificationManager) getApplicationContext().getSystemService(NOTIFICATION_SERVICE);
+            Notification.Builder builder = new Notification.Builder(this)
+                    .setWhen(System.currentTimeMillis())
+                    .setContentTitle(getString(R.string.temp_notify_title))
+                    .setContentText(getString(R.string.temp_notify_text))
+                    .setShowWhen(true)
+                    .setLights(0xff00ff00, 300, 1000)
+                    .setSmallIcon(R.drawable.drawable_temp)
+                    .setDefaults(Notification.DEFAULT_LIGHTS | Notification.DEFAULT_VIBRATE)
+                    .setDefaults(Notification.DEFAULT_VIBRATE)
+                    .setDefaults(Notification.DEFAULT_SOUND)
+                    .setContentIntent(pendingIntent)
+                    .setAutoCancel(true);
 
-    io.reactivex.Observer<String> observer = new Observer<String>() {
-        @Override
-        public void onSubscribe(Disposable d) {
-            disposable[0] = d;
-            //System.out.println("已经订阅：onSubscribe，获取解除器");
-        }
+            NotificationChannel channel;
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                channel = new NotificationChannel(TEST_NOTIFY_ID
+                        , "Water Empty"
+                        , NotificationManager.IMPORTANCE_HIGH);
+                channel.enableLights(true);
+                channel.enableVibration(true);
+                channel.shouldShowLights();
+                channel.setLightColor(Color.GREEN);
+                channel.setLockscreenVisibility(Notification.VISIBILITY_PUBLIC);
+                builder.setChannelId(TEST_NOTIFY_ID);
 
-        @Override
-        public void onNext(String string) {
-            try {
-                //if (readCnt.get() >= 9) {
-                System.out.println("next");
-                WriteBT(string);
-                buffer = new byte[256];
-                readCnt = new AtomicInteger();
-
-                BTValTmp.delete(0, BTValTmp.length());
-                SharedBTValue();
-                //}
-            } catch (Exception e) {
-                e.printStackTrace();
+                manager.createNotificationChannel(channel);
+            } else {
+                builder.setDefaults(Notification.DEFAULT_ALL)
+                        .setVisibility(Notification.VISIBILITY_PUBLIC);
             }
+            int testNotifyId = 13;
+            manager.notify(testNotifyId,
+                    builder.build());
+        } catch (Exception e) {
 
         }
-
-        @Override
-        public void onError(Throwable e) {
-            // System.out.println("信号接收：onError " + e.getMessage());
-            cancel();
-        }
-
-        @Override
-        public void onComplete() {
-            //System.out.println("信号接收：onComplete");
-        }
-    };
-
-    public void sub() {
-        //System.out.println("開始訂閱：subscribe");
-        observable.subscribe(observer);
     }
 
-    public void cancel() {
-        System.out.println("取消訂閱：unsubscribe");
-        if (disposable[0] != null)
-            disposable[0].dispose();
+    public void TimeModeEndNotify(String title, String text) {
+        Log.d(TAG, "TimeModeEndNotify: ");
+        try {
+            Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+            intent.putExtra("noti_id", NOTIFY_REQUEST_ID);
+            PendingIntent pendingIntent = PendingIntent.getActivity(getApplicationContext(),
+                    NOTIFY_REQUEST_ID,
+                    intent,
+                    PendingIntent.FLAG_UPDATE_CURRENT);
+
+            NotificationManager manager = (NotificationManager) getApplicationContext().getSystemService(NOTIFICATION_SERVICE);
+            Notification.Builder builder = new Notification.Builder(this)
+                    .setWhen(System.currentTimeMillis())
+                    .setContentTitle(title)
+                    .setContentText(text)
+                    .setShowWhen(true)
+                    .setLights(0xff00ff00, 300, 1000)
+                    .setSmallIcon(R.drawable.drawable_timer_white)
+                    .setDefaults(Notification.DEFAULT_LIGHTS | Notification.DEFAULT_VIBRATE)
+                    .setDefaults(Notification.DEFAULT_VIBRATE)
+                    .setDefaults(Notification.DEFAULT_SOUND)
+                    .setContentIntent(pendingIntent)
+                    .setAutoCancel(true);
+
+            NotificationChannel channel;
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                channel = new NotificationChannel(TEST_NOTIFY_ID
+                        , "Water Empty"
+                        , NotificationManager.IMPORTANCE_HIGH);
+                channel.enableLights(true);
+                channel.enableVibration(true);
+                channel.shouldShowLights();
+                channel.setLightColor(Color.GREEN);
+                channel.setLockscreenVisibility(Notification.VISIBILITY_PUBLIC);
+                builder.setChannelId(TEST_NOTIFY_ID);
+
+                manager.createNotificationChannel(channel);
+            } else {
+                builder.setDefaults(Notification.DEFAULT_ALL)
+                        .setVisibility(Notification.VISIBILITY_PUBLIC);
+            }
+            int testNotifyId = 14;
+            manager.notify(testNotifyId,
+                    builder.build());
+        } catch (Exception e) {
+
+        }
     }
 
-    public int getTempIndex(){
+
+    public int getTempIndex() {
         return TempIndex;
     }
-    public int getWaterIndex(){
+
+    public int getWaterIndex() {
         return WaterIndex;
     }
+
     public static int getDeviceIndex() {
         return isMainDevice;
     }
 
-    public static void setDeviceIndex(int i){
+    public static void setDeviceIndex(int i) {
         isMainDevice = i;
-    }
-
-    public interface OnUpdateSensorVol {
-        void OnWaterChange(int vol);
-
-        void OnTempChange(int val);
     }
 
     public interface OnConnectedDevice {

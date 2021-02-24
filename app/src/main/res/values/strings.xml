@@ -13,4 +13,13 @@
     <string name="menu">側邊欄</string>
     <string name="radio_btn_title_1">吹風裝置1  段數</string>
     <string name="radio_btn_title_2">吹風裝置2  段數</string>
+    <string name="main_time_mode_notify_title">主吹風裝置計時模式已結束</string>
+    <string name="extend_time_mode_notify_title">子吹風裝置計時模式已結束</string>
+    <string name="end_reason_normal">結束原因:正常結束</string>
+    <string name="end_reason_temp">結束原因:溫度過高</string>
+    <string name="end_reason_cancel">結束原因:取消動作</string>
+    <string name="water_notify_title">偵測到水霧裝置水量過低</string>
+    <string name="water_notify_text">請進行補水</string>
+    <string name="temp_notify_title">偵測到吹風裝置溫度過高</string>
+    <string name="temp_notify_text">已自動關閉裝置</string>
 </resources>

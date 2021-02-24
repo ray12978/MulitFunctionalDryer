@@ -94,14 +94,12 @@ public class MainActivity extends AppCompatActivity {
     }
 
     void timer() {
-        AtomicInteger i = new AtomicInteger();
-        AtomicInteger a = new AtomicInteger(5);
         rxTimer1.interval(1000, number -> {
             if (MyApp.getConnected()) UpdateSensorData();
         });
-        rxTimer2.interval(2000, number -> {
+       /* rxTimer2.interval(2000, number -> {
             System.out.println(a.getAndIncrement());
-        });
+        });*/
     }
 
     private void Initialize() {
@@ -136,9 +134,18 @@ public class MainActivity extends AppCompatActivity {
     void UpdateSensorData() {
 
         int TempValue = MyAppInst.getTempIndex();
-        Integer WaterVolume = MyAppInst.getWaterIndex();
-        System.out.println(WaterVolume);
-        float f = WaterVolume.floatValue() / 750 * 100;
+        int WaterVolume = MyAppInst.getWaterIndex();
+        float f = (float) WaterVolume / 750 * 100;
+
+        if (f <= 15 && !MyApp.WaterBeeped) {
+            MyAppInst.WaterEmptyNotify();
+            MyApp.WaterBeeped = true;
+        } else if (f > 15) MyApp.WaterBeeped = false;
+
+        if (TempValue > 30 && !MyApp.TempBeeped) {
+            MyAppInst.TempHighNotify();
+            MyApp.TempBeeped = true;
+        } else if (TempValue < 30) MyApp.TempBeeped = false;
         if (f != 0 && TempValue != 0) {
             waterPieChart.setPieChartValue(f);
             TempView.setText(String.valueOf(TempValue));
@@ -147,9 +154,6 @@ public class MainActivity extends AppCompatActivity {
                     .putInt("temp", TempValue)
                     .apply();
         }
-
-        System.out.println("update!");
-
     }
 
     private void makeSnack(String msg) {
@@ -236,7 +240,7 @@ public class MainActivity extends AppCompatActivity {
         materialToolbar.setOnMenuItemClickListener(item -> {
             int ID = item.getItemId();
             if (ID == R.id.ConnBT) {
-                if(BTAddress.equals("") || BTAddress.equals("null")){
+                if (BTAddress.equals("") || BTAddress.equals("null")) {
                     makeSnack("請先選擇欲連線裝置");
                     return false;
                 }
@@ -245,10 +249,10 @@ public class MainActivity extends AppCompatActivity {
                 else item.setIcon(R.drawable.drawable_bluetooth_white);
 
                 BluetoothDevice device = bluetoothAdapter.getRemoteDevice(BTAddress);
-                MyAppInst.connDevice(device);
+                if (!MyApp.getConnected()) MyAppInst.connDevice(device);
+                else MyAppInst.disconnect();
 
             } else if (ID == R.id.PageRefresh) {
-
                 UpdateSensorData();
             }
             return false;
@@ -266,12 +270,10 @@ public class MainActivity extends AppCompatActivity {
                     switch (event.getAction()) {
                         case BluetoothDevice.ACTION_ACL_CONNECTED:
                             Log.e(TAG, "Device is connected");
-                            //DpBTConnState(true);
                             setDryerSta(true);
                             break;
                         case BluetoothDevice.ACTION_ACL_DISCONNECTED:
                             Log.e(TAG, "Device is disconnected");
-                            //DpBTConnState(false);
                             setDryerSta(false);
                             break;
                         case BluetoothDevice.ACTION_ACL_DISCONNECT_REQUESTED:

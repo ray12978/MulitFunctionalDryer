@@ -22,6 +22,10 @@ public class TimePickerDialog {
         this.activity = activity;
     }
 
+    public TimePickerDialog() {
+
+    }
+
     public void showDialog() {
         /**關於AlertDialog相關的設置請參考這篇文章：
          * https://thumbb13555.pixnet.net/blog/post/310777160*/

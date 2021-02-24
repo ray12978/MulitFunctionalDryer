@@ -14,6 +14,9 @@ import com.ray.mulitfunctionaldryer.R;
 import com.ray.mulitfunctionaldryer.component.TimePickerDialog;
 import com.ray.mulitfunctionaldryer.component.BottomNavigation;
 import com.ray.mulitfunctionaldryer.util.MyApp;
+import com.ray.mulitfunctionaldryer.util.RxTimer;
+
+import java.sql.Timestamp;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -24,6 +27,7 @@ public class ConsoleActivity extends AppCompatActivity {
     private final TimePickerDialog dialog = new TimePickerDialog(this);
     private TextView TimerText;
     private final MyApp MyAppInst = MyApp.getAppInstance();
+
     RadioButton Dryer1RB1;
     RadioButton Dryer1RB2;
     RadioButton Dryer1RB3;
@@ -33,15 +37,20 @@ public class ConsoleActivity extends AppCompatActivity {
     RadioButton FoggerRB1;
     RadioButton FoggerRB2;
     CheckBox TimerCheck;
+
     StringBuffer BTMsg = new StringBuffer();
     int Dryer1 = 0;
     int Dryer2 = 0;
     boolean Fogger = false;
     boolean TimeMode = false;
     boolean HeatMode = false;
+    public static boolean isTiming = false;
     private String Times = "000";
     Button DryerStartBtn;
     Button DryerStopBtn;
+
+    RxTimer rxTimer = new RxTimer();
+
     /**
      * @param DeviceType
      * 0 為 未知裝置
@@ -50,6 +59,7 @@ public class ConsoleActivity extends AppCompatActivity {
      */
     int DeviceType = 0;
 
+    int[] timestamp = new int[4];
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -61,6 +71,11 @@ public class ConsoleActivity extends AppCompatActivity {
         initConsole();
         initView();
         initButtonEvent();
+
+        rxTimer.interval(500, number -> {
+            if (MyApp.getTimeString().length()>1 && isTiming)
+                TimerText.setText(MyApp.getTimeString());
+        });
     }
 
     private void initConsole() {
@@ -85,7 +100,6 @@ public class ConsoleActivity extends AppCompatActivity {
         TextView DryerTitle1 = findViewById(R.id.DryerTitle1);
 
         DeviceType = MyApp.getDeviceIndex();
-        //DeviceType = 2;
         if (DeviceType == 2) {
             Dryer2RB1.setText("開啟");
             Dryer2RB2.setText("關閉");
@@ -108,19 +122,25 @@ public class ConsoleActivity extends AppCompatActivity {
     private void initButtonEvent() {
         DryerStartBtn.setOnClickListener(v -> {
             try {
-
                 getData();
-                //setBTMsg(DeviceType);
                 setBTMsg(DeviceType);
                 MyAppInst.WriteBT(BTMsg.toString());
-
+                MyAppInst.StartCount();
+                isTiming = true;
             } catch (Exception e) {
                 e.printStackTrace();
             }
         });
         DryerStopBtn.setOnClickListener(v -> {
             try {
+                isTiming = false;
+                timestamp = new int[4];
+                MyAppInst.StopCount();
+                MyApp.setTimeString("00:00:00");
+                MyApp.setTimeSaver(timestamp);
+                TimerText.setText("00:00:00");
                 MyAppInst.WriteBT("$NND00YN000O");
+
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -161,7 +181,7 @@ public class ConsoleActivity extends AppCompatActivity {
             BTMsg.append(Dryer2);
         if (index == 2 && HeatMode)
             BTMsg.append('Y');
-        else if (index == 2 && !HeatMode)
+        else if (index == 2)
             BTMsg.append('N');
         if (TimeMode) BTMsg.append('Y');
         else BTMsg.append('N');
@@ -198,6 +218,7 @@ public class ConsoleActivity extends AppCompatActivity {
                 num[0] = times / 10000;
                 num[1] = times % 10000 / 100;
                 num[2] = times % 100;
+                timestamp = num;
                 //TODO Save time value to bluetooth string
             }
 
@@ -214,13 +235,13 @@ public class ConsoleActivity extends AppCompatActivity {
                     times = times.concat(minutes);
                     times = times.concat(seconds);
 
-                    int timeIndex = Math.min(num[0]*3600+num[1]*60+num[2],999);
+                    int timeIndex = Math.min(num[0] * 3600 + num[1] * 60 + num[2], 999);
 
                     Times = "";
-
-                    Times = Times.concat(String.valueOf(timeIndex/100));
-                    Times = Times.concat(String.valueOf(timeIndex%100/10));
-                    Times = Times.concat(String.valueOf(timeIndex%10));
+                    MyApp.setTimeSaver(num);
+                    Times = Times.concat(String.valueOf(timeIndex / 100));
+                    Times = Times.concat(String.valueOf(timeIndex % 100 / 10));
+                    Times = Times.concat(String.valueOf(timeIndex % 10));
                     TimerText.setText(times);
                     System.out.println(num[0]);
                     System.out.println("Sel true");
