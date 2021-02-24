@@ -19,7 +19,7 @@
 
     <RadioButton
         android:id="@+id/Dryer1RBtn1"
-        android:layout_width="wrap_content"
+        android:layout_width="80sp"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
 
@@ -33,7 +33,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
 
-        android:layout_marginStart="50dp"
+        android:layout_marginStart="20dp"
         android:layout_marginTop="24dp"
         android:text="1"
         app:layout_constraintStart_toEndOf="@+id/Dryer1RBtn1"
@@ -52,7 +52,7 @@
 
     <RadioButton
         android:id="@+id/Dryer2RBtn1"
-        android:layout_width="wrap_content"
+        android:layout_width="80sp"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginTop="24dp"
@@ -62,7 +62,7 @@
 
     <RadioButton
         android:id="@+id/ForRBtnOn"
-        android:layout_width="wrap_content"
+        android:layout_width="80sp"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginTop="24dp"
@@ -74,7 +74,7 @@
         android:id="@+id/ForRBtnOff"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="36dp"
+        android:layout_marginStart="20dp"
         android:layout_marginTop="24dp"
         android:text="關閉"
         app:layout_constraintStart_toEndOf="@+id/ForRBtnOn"
@@ -84,7 +84,7 @@
         android:id="@+id/Dryer2RBtn2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="50dp"
+        android:layout_marginStart="20dp"
         android:layout_marginTop="24dp"
         android:text="1"
         app:layout_constraintStart_toEndOf="@+id/Dryer2RBtn1"

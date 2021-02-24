@@ -181,17 +181,13 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void setDryerInfoText(@NonNull String BTname) {
-        if (BTname.equals("DryerMain")){
+        if (BTname.equals("DryerMain")) {
             DryerInfoText.setText("主吹風裝置");
             MyApp.setDeviceIndex(1);
-        }
-
-        else if (BTname.equals("DryerExtend")){
+        } else if (BTname.equals("DryerExtend")) {
             DryerInfoText.setText("子吹風裝置");
             MyApp.setDeviceIndex(2);
-        }
-
-        else{
+        } else {
             DryerInfoText.setText("不支援的裝置");
             MyApp.setDeviceIndex(0);
         }
@@ -240,21 +236,23 @@ public class MainActivity extends AppCompatActivity {
         materialToolbar.setOnMenuItemClickListener(item -> {
             int ID = item.getItemId();
             if (ID == R.id.ConnBT) {
-                if (!BTAddress.equals("")) {
-                    System.out.println(BTAddress);
-                    if (!isConnected) item.setIcon(R.drawable.drawable_bluetooth_connected);
-                    else item.setIcon(R.drawable.drawable_bluetooth_white);
-
-                    BluetoothDevice device = bluetoothAdapter.getRemoteDevice(BTAddress);
-                    MyAppInst.connDevice(device);
+                if(BTAddress.equals("") || BTAddress.equals("null")){
+                    makeSnack("請先選擇欲連線裝置");
+                    return false;
                 }
+                System.out.println(BTAddress);
+                if (!MyApp.getConnected()) item.setIcon(R.drawable.drawable_bluetooth_connected);
+                else item.setIcon(R.drawable.drawable_bluetooth_white);
+
+                BluetoothDevice device = bluetoothAdapter.getRemoteDevice(BTAddress);
+                MyAppInst.connDevice(device);
+
             } else if (ID == R.id.PageRefresh) {
 
                 UpdateSensorData();
             }
             return false;
         });
-        // materialToolbar.setMenu();
     }
 
     private void InitEvent() {
@@ -283,7 +281,6 @@ public class MainActivity extends AppCompatActivity {
                             Log.e(TAG, "None Device");
                             setDryerSta(false);
                             break;
-
                     }
                 }));
     }

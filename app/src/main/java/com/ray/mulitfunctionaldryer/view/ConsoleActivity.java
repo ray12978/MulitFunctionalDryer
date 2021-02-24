@@ -95,8 +95,8 @@ public class ConsoleActivity extends AppCompatActivity {
             DryerTitle1.setText("吹風裝置段數");
         }
         if (DeviceType == 1) {
-            Dryer2RB1.setVisibility(View.VISIBLE);
-            Dryer2RB2.setVisibility(View.VISIBLE);
+            Dryer2RB1.setText("0");
+            Dryer2RB2.setText("1");
             Dryer2RB3.setVisibility(View.VISIBLE);
             textView.setVisibility(View.VISIBLE);
             DryerTitle2.setVisibility(View.VISIBLE);
@@ -214,10 +214,13 @@ public class ConsoleActivity extends AppCompatActivity {
                     times = times.concat(minutes);
                     times = times.concat(seconds);
 
-                    int timeIndex = num[0]*3600+num[1]*60+num[2];
+                    int timeIndex = Math.min(num[0]*3600+num[1]*60+num[2],999);
 
                     Times = "";
-                    Times = String.valueOf(Math.min(timeIndex,999));
+
+                    Times = Times.concat(String.valueOf(timeIndex/100));
+                    Times = Times.concat(String.valueOf(timeIndex%100/10));
+                    Times = Times.concat(String.valueOf(timeIndex%10));
                     TimerText.setText(times);
                     System.out.println(num[0]);
                     System.out.println("Sel true");
