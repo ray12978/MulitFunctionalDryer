@@ -16,7 +16,7 @@
         android:text="°C"
         android:textSize="40sp"
         android:typeface="monospace"
-        app:layout_constraintBottom_toBottomOf="@+id/textView11"
+
         app:layout_constraintStart_toEndOf="@+id/TempTV"
         app:layout_constraintTop_toTopOf="@+id/TempTV" />
 
@@ -27,7 +27,7 @@
         android:layout_marginStart="50dp"
         android:layout_marginTop="60dp"
         android:textSize="30sp"
-        android:text="現在溫度"
+        android:text="@string/TemperatureTitle"
 
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/DryerStaTV" />

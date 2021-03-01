@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="TemperatureTitle">裝置溫度</string>
+    <string name="radiobutton_text_2">2</string>
+    <string name="radiobutton_text_0">0</string>
+    <string name="radiobutton_text_1">1</string>
+    <string name="timer_default_value">00:00:00</string>
+    <string name="select_bluetooth_toolbar_title">選擇藍芽裝置</string>
+    <string name="device_select_not_yet_text">尚未選擇裝置</string>
+    <string name="select_dryer_first_message">請先連線吹風裝置</string>
+    <string name="device_connected">吹風裝置已連線</string>
+    <string name="device_not_connected">吹風裝置尚未連線</string>
+    <string name="main_device_text">主吹風裝置</string>
+    <string name="extend_device_text">子吹風裝置</string>
+    <string name="unknown_device_text">不支援的裝置</string>
+    <string name="select_correct_device_first_text">請先選擇欲連線裝置</string>
+</resources>

@@ -5,6 +5,7 @@
     <string name="item3_title">藍芽設定</string>
     <string name="top_appbar_item1">藍芽連線</string>
     <string name="top_appbar_item2">重新整理</string>
+    <string name="console_toolbar_title">定時模式設定</string>
     <string name="nav_header_title">Android Studio</string>
     <string name="nav_header_subtitle">android.studio@android.com</string>
     <string name="nav_header_desc">Navigation header</string>
@@ -22,4 +23,35 @@
     <string name="water_notify_text">請進行補水</string>
     <string name="temp_notify_title">偵測到吹風裝置溫度過高</string>
     <string name="temp_notify_text">已自動關閉裝置</string>
+    <string name="TemperatureTitle">裝置溫度</string>
+    <string name="radiobutton_text_2">2</string>
+    <string name="radiobutton_text_0">0</string>
+    <string name="radiobutton_text_1">1</string>
+    <string name="timer_default_value">00:00:00</string>
+    <string name="timer_checkbox_text">不使用定時功能，直接啟動直到下次關閉</string>
+    <string name="on_text">開啟</string>
+    <string name="off_text">關閉</string>
+    <string name="time_setting_title">定時時間設定</string>
+    <string name="fogger_setting_title">水霧功能設定</string>
+    <string name="radiobutton_value_unit_text">段</string>
+    <string name="start_button_text">啟動</string>
+    <string name="cancel_button_text">取消動作</string>
+    <string name="searching_device_button_text">搜尋附近的藍芽裝置</string>
+    <string name="time_picker_unit_second">秒</string>
+    <string name="time_picker_unit_hour">時</string>
+    <string name="time_picker_unit_minute">分</string>
+    <string name="bluetooth_device_name">裝置名稱</string>
+    <string name="bluetooth_device_address">裝置位址</string>
+    <string name="extend_radio_button_title">吹風裝置段數</string>
+    <string name="heat_title">加熱功能</string>
+    <string name="select_bluetooth_toolbar_title">選擇藍芽裝置</string>
+    <string name="device_select_not_yet_text">尚未選擇裝置</string>
+    <string name="select_dryer_first_message">請先連線吹風裝置</string>
+    <string name="device_connected">吹風裝置已連線</string>
+    <string name="device_not_connected">吹風裝置尚未連線</string>
+    <string name="main_device_text">主吹風裝置</string>
+    <string name="extend_device_text">子吹風裝置</string>
+    <string name="unknown_device_text">不支援的裝置</string>
+    <string name="select_correct_device_first_text">請先選擇欲連線裝置</string>
+
 </resources>

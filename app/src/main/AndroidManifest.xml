@@ -2,6 +2,12 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.ray.mulitfunctionaldryer">
 
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.BLUETOOTH" />
+    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
+    <uses-permission android:name="android.permission.NOTIFICATION_SERVICE" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+
     <application
         android:name="com.ray.mulitfunctionaldryer.util.MyApp"
         android:allowBackup="true"
@@ -33,5 +39,6 @@
             android:theme="@style/Activity.Theme">
         </activity>
     </application>
+
 
 </manifest>

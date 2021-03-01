@@ -16,8 +16,6 @@ import com.ray.mulitfunctionaldryer.component.BottomNavigation;
 import com.ray.mulitfunctionaldryer.util.MyApp;
 import com.ray.mulitfunctionaldryer.util.RxTimer;
 
-import java.sql.Timestamp;
-
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -101,21 +99,21 @@ public class ConsoleActivity extends AppCompatActivity {
 
         DeviceType = MyApp.getDeviceIndex();
         if (DeviceType == 2) {
-            Dryer2RB1.setText("開啟");
-            Dryer2RB2.setText("關閉");
+            Dryer2RB1.setText(getString(R.string.on_text));
+            Dryer2RB2.setText(getString(R.string.off_text));
             Dryer2RB3.setVisibility(View.INVISIBLE);
             textView.setVisibility(View.INVISIBLE);
-            DryerTitle2.setText("加熱功能");
-            DryerTitle1.setText("吹風裝置段數");
+            DryerTitle2.setText(getString(R.string.heat_title));
+            DryerTitle1.setText(getString(R.string.extend_radio_button_title));
         }
         if (DeviceType == 1) {
-            Dryer2RB1.setText("0");
-            Dryer2RB2.setText("1");
+            Dryer2RB1.setText(getString(R.string.radiobutton_text_0));
+            Dryer2RB2.setText(getString(R.string.radiobutton_text_1));
             Dryer2RB3.setVisibility(View.VISIBLE);
             textView.setVisibility(View.VISIBLE);
             DryerTitle2.setVisibility(View.VISIBLE);
-            DryerTitle1.setText("吹風裝置1 段數");
-            DryerTitle2.setText("吹風裝置2 段數");
+            DryerTitle1.setText(getString(R.string.radio_btn_title_1));
+            DryerTitle2.setText(getString(R.string.radio_btn_title_2));
         }
     }
 
@@ -136,9 +134,9 @@ public class ConsoleActivity extends AppCompatActivity {
                 isTiming = false;
                 timestamp = new int[4];
                 MyAppInst.StopCount();
-                MyApp.setTimeString("00:00:00");
+                MyApp.setTimeString(getString(R.string.timer_default_value));
                 MyApp.setTimeSaver(timestamp);
-                TimerText.setText("00:00:00");
+                TimerText.setText(getString(R.string.timer_default_value));
                 MyAppInst.WriteBT("$NND00YN000O");
 
             } catch (Exception e) {
@@ -197,7 +195,7 @@ public class ConsoleActivity extends AppCompatActivity {
 
     private void setToolbar() {
         Toolbar toolbar = findViewById(R.id.toolbar);
-        toolbar.setTitle("定時模式設定");
+        toolbar.setTitle(getString(R.string.console_toolbar_title));
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setHomeButtonEnabled(true);

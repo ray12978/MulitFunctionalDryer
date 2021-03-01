@@ -49,7 +49,7 @@ import io.reactivex.schedulers.Schedulers;
 
 public class MyApp extends Application {
     public static MyApp appInstance;
-    private static boolean isConnected;
+    public static boolean isConnected;
 
     public static synchronized MyApp getAppInstance() {
         return appInstance;

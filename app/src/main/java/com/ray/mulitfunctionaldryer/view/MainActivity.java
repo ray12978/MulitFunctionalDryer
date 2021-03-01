@@ -23,9 +23,6 @@ import com.ray.mulitfunctionaldryer.component.BottomNavigation;
 import com.ray.mulitfunctionaldryer.component.WaterPieChart;
 import com.ray.mulitfunctionaldryer.util.MyApp;
 import com.ray.mulitfunctionaldryer.util.RxTimer;
-import com.ray.mulitfunctionaldryer.util.RxWaterTimer;
-
-import java.util.concurrent.atomic.AtomicInteger;
 
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
@@ -107,7 +104,7 @@ public class MainActivity extends AppCompatActivity {
         float initWater = SensorManager.getFloat("water", 0);
         int initTemperature = SensorManager.getInt("temp", 0);
         final String deviceName = getSharedPreferences("BTDetail", MODE_PRIVATE)
-                .getString("Name", "尚未選擇裝置");
+                .getString("Name", getString(R.string.device_select_not_yet_text));
         final String deviceAddress = getSharedPreferences("BTDetail", MODE_PRIVATE)
                 .getString("Address", "null");
         BTAddress = deviceAddress;
@@ -170,42 +167,44 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         setBTStatus();
-        if (!MyApp.getConnected()) makeSnack("請先連線吹風裝置");
+        if (!MyApp.getConnected()) makeSnack(getString(R.string.select_dryer_first_message));
         super.onStart();
     }
 
     private void initDryerSta() {
         if (MyApp.getConnected()) {
-            DryerStaText.setText("吹風裝置已連線");
+            DryerStaText.setText(R.string.device_connected);
             BTLight.setImageResource(R.drawable.drawable_circle);
         } else {
-            DryerStaText.setText("吹風裝置尚未連線");
+            DryerStaText.setText(R.string.device_not_connected);
             BTLight.setImageResource(R.drawable.drawable_circle_gray);
         }
     }
 
     private void setDryerInfoText(@NonNull String BTname) {
         if (BTname.equals("DryerMain")) {
-            DryerInfoText.setText("主吹風裝置");
+            DryerInfoText.setText(R.string.main_device_text);
             MyApp.setDeviceIndex(1);
         } else if (BTname.equals("DryerExtend")) {
-            DryerInfoText.setText("子吹風裝置");
+            DryerInfoText.setText(R.string.extend_device_text);
             MyApp.setDeviceIndex(2);
         } else {
-            DryerInfoText.setText("不支援的裝置");
+            DryerInfoText.setText(R.string.unknown_device_text);
             MyApp.setDeviceIndex(0);
         }
     }
 
     private void setDryerSta(boolean connected) {
         if (connected) {
-            DryerStaText.setText("吹風裝置已連線");
+            DryerStaText.setText(R.string.device_connected);
             isConnected = true;
+            MyApp.isConnected = true;
             BTLight.setImageResource(R.drawable.drawable_circle);
             System.out.println("connected");
         }
         if (!connected) {
-            DryerStaText.setText("吹風裝置尚未連線");
+            DryerStaText.setText(R.string.device_not_connected);
+            MyApp.isConnected = false;
             isConnected = false;
             BTLight.setImageResource(R.drawable.drawable_circle_gray);
             System.out.println("not connected");
@@ -241,7 +240,7 @@ public class MainActivity extends AppCompatActivity {
             int ID = item.getItemId();
             if (ID == R.id.ConnBT) {
                 if (BTAddress.equals("") || BTAddress.equals("null")) {
-                    makeSnack("請先選擇欲連線裝置");
+                    makeSnack(getString(R.string.select_correct_device_first_text));
                     return false;
                 }
                 System.out.println(BTAddress);

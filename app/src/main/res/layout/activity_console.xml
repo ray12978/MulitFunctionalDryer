@@ -12,7 +12,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginBottom="30dp"
-        android:text="不使用定時功能，直接啟動直到下次關閉"
+        android:text="@string/timer_checkbox_text"
         app:layout_constraintBottom_toTopOf="@+id/Bottom_Main"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView7" />
@@ -24,7 +24,7 @@
         android:layout_marginStart="16dp"
 
         android:layout_marginTop="24dp"
-        android:text="0"
+        android:text="@string/radiobutton_text_0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/DryerTitle1" />
 
@@ -35,7 +35,7 @@
 
         android:layout_marginStart="20dp"
         android:layout_marginTop="24dp"
-        android:text="1"
+        android:text="@string/radiobutton_text_1"
         app:layout_constraintStart_toEndOf="@+id/Dryer1RBtn1"
         app:layout_constraintTop_toBottomOf="@+id/DryerTitle1" />
 
@@ -46,7 +46,7 @@
 
         android:layout_marginStart="50dp"
         android:layout_marginTop="24dp"
-        android:text="2"
+        android:text="@string/radiobutton_text_2"
         app:layout_constraintStart_toEndOf="@+id/Dryer1RBtn2"
         app:layout_constraintTop_toBottomOf="@+id/DryerTitle1" />
 
@@ -56,7 +56,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginTop="24dp"
-        android:text="0"
+        android:text="@string/radiobutton_text_0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/DryerTitle2" />
 
@@ -66,7 +66,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginTop="24dp"
-        android:text="開啟"
+        android:text="@string/on_text"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView6" />
 
@@ -76,7 +76,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="20dp"
         android:layout_marginTop="24dp"
-        android:text="關閉"
+        android:text="@string/off_text"
         app:layout_constraintStart_toEndOf="@+id/ForRBtnOn"
         app:layout_constraintTop_toBottomOf="@+id/textView6" />
 
@@ -86,7 +86,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="20dp"
         android:layout_marginTop="24dp"
-        android:text="1"
+        android:text="@string/radiobutton_text_1"
         app:layout_constraintStart_toEndOf="@+id/Dryer2RBtn1"
         app:layout_constraintTop_toBottomOf="@+id/DryerTitle2" />
 
@@ -96,7 +96,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="50dp"
         android:layout_marginTop="24dp"
-        android:text="2"
+        android:text="@string/radiobutton_text_2"
         app:layout_constraintStart_toEndOf="@+id/Dryer2RBtn2"
         app:layout_constraintTop_toBottomOf="@+id/DryerTitle2" />
 
@@ -106,7 +106,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginTop="80dp"
-        android:text="定時時間設定"
+        android:text="@string/time_setting_title"
         android:textSize="20sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/ForRBtnOn" />
@@ -117,7 +117,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginTop="150dp"
-        android:text="水霧功能設定"
+        android:text="@string/fogger_setting_title"
         android:textSize="20sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/Dryer1RBtn1" />
@@ -128,7 +128,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="24dp"
         android:layout_marginTop="24dp"
-        android:text="段"
+        android:text="@string/radiobutton_value_unit_text"
         android:textSize="20sp"
         app:layout_constraintStart_toEndOf="@+id/Dryer2RBtn3"
         app:layout_constraintTop_toBottomOf="@+id/DryerTitle2" />
@@ -161,7 +161,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="24dp"
         android:layout_marginTop="24dp"
-        android:text="段"
+        android:text="@string/radiobutton_value_unit_text"
         android:textSize="20sp"
         app:layout_constraintStart_toEndOf="@+id/Dryer1RBtn3"
         app:layout_constraintTop_toBottomOf="@+id/DryerTitle1" />
@@ -172,7 +172,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="60dp"
         android:layout_marginTop="60dp"
-        android:text="00:00:00"
+        android:text="@string/timer_default_value"
         android:textSize="40sp"
         app:layout_constraintStart_toEndOf="@+id/textView7"
         app:layout_constraintTop_toBottomOf="@+id/ForRBtnOff" />
@@ -228,7 +228,7 @@
         android:layout_marginStart="72dp"
         android:layout_marginBottom="30dp"
         android:backgroundTint="@color/colorPrimary"
-        android:text="啟動"
+        android:text="@string/start_button_text"
         android:textColor="@color/white"
         app:layout_constraintBottom_toTopOf="@+id/Bottom_Main"
         app:layout_constraintStart_toStartOf="parent" />
@@ -240,7 +240,7 @@
         android:layout_marginEnd="72dp"
         android:layout_marginBottom="30dp"
         android:backgroundTint="@color/colorPrimary"
-        android:text="取消動作"
+        android:text="@string/cancel_button_text"
         android:textColor="@color/white"
         app:layout_constraintBottom_toTopOf="@+id/Bottom_Main"
         app:layout_constraintEnd_toEndOf="parent"

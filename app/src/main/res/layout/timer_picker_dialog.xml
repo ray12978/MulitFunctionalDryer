@@ -13,7 +13,7 @@
 
         android:layout_marginTop="16dp"
         android:layout_marginBottom="8dp"
-        android:text="秒"
+        android:text="@string/time_picker_unit_second"
         android:textAppearance="@style/TextAppearance.AppCompat.Large"
         app:layout_constraintBottom_toTopOf="@+id/numberPicker_Min"
         app:layout_constraintEnd_toEndOf="@+id/numberPicker_Sec"
@@ -27,7 +27,7 @@
 
         android:layout_marginTop="16dp"
         android:layout_marginBottom="8dp"
-        android:text="時"
+        android:text="@string/time_picker_unit_hour"
         android:textAppearance="@style/TextAppearance.AppCompat.Large"
         app:layout_constraintBottom_toTopOf="@+id/numberPicker_Min"
         app:layout_constraintEnd_toEndOf="@+id/numberPicker_Hour"
@@ -41,7 +41,7 @@
 
         android:layout_marginTop="16dp"
         android:layout_marginBottom="8dp"
-        android:text="分"
+        android:text="@string/time_picker_unit_minute"
         android:textAppearance="@style/TextAppearance.AppCompat.Large"
         app:layout_constraintBottom_toTopOf="@+id/numberPicker_Min"
         app:layout_constraintEnd_toEndOf="@+id/numberPicker_Min"

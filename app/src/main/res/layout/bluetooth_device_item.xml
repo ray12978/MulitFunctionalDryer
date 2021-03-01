@@ -28,7 +28,7 @@
         app:layout_constraintLeft_toRightOf="@id/icon"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        tools:text="裝置名稱" />
+        tools:text="@string/bluetooth_device_name" />
 
     <TextView
         android:id="@+id/textAddress"
@@ -39,6 +39,6 @@
         app:layout_constraintLeft_toLeftOf="@id/textName"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@id/textName"
-        tools:text="裝置位址" />
+        tools:text="@string/bluetooth_device_address" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

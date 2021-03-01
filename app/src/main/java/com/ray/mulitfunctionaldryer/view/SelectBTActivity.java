@@ -145,7 +145,7 @@ public class SelectBTActivity extends AppCompatActivity {
 
     private void setToolbar(){
         Toolbar toolbar = findViewById(R.id.toolbar);
-        toolbar.setTitle("選擇藍芽裝置");
+        toolbar.setTitle(getString(R.string.select_bluetooth_toolbar_title));
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setHomeButtonEnabled(true);
