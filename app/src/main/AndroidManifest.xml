@@ -21,7 +21,9 @@
             android:name=".view.MainActivity"
             android:theme="@style/Activity.Theme"
             android:persistableMode="persistAcrossReboots"
+            android:screenOrientation="portrait"
             >
+
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -31,7 +33,8 @@
         <activity
             android:name=".view.SelectBTActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/Activity.Theme">
+            android:theme="@style/Activity.Theme"
+            >
         </activity>
         <activity
             android:name=".view.ConsoleActivity"

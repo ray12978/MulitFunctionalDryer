@@ -19,6 +19,8 @@
         android:layout_height="wrap_content"
         android:layout_margin="16dp"
         android:text="@string/searching_device_button_text"
+        android:backgroundTint="@color/colorPrimary"
+        android:textColor="@color/white"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/include" />

@@ -37,7 +37,6 @@ public class MainActivity extends AppCompatActivity {
      */
     private WaterPieChart waterPieChart;
     private TextView DryerInfoText, DryerStaText, TempView;
-    private MaterialToolbar materialToolbar;
     private ImageView BTLight;
 
     String TAG = "Dryer";
@@ -105,10 +104,11 @@ public class MainActivity extends AppCompatActivity {
         int initTemperature = SensorManager.getInt("temp", 0);
         final String deviceName = getSharedPreferences("BTDetail", MODE_PRIVATE)
                 .getString("Name", getString(R.string.device_select_not_yet_text));
+        BTName = deviceName;
         final String deviceAddress = getSharedPreferences("BTDetail", MODE_PRIVATE)
                 .getString("Address", "null");
         BTAddress = deviceAddress;
-        BTName = deviceName;
+
         bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
         TempView = findViewById(R.id.TempTV);
         PieChart pieChart = findViewById(R.id.piechart);
@@ -234,7 +234,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void InitToolbar() {
-        materialToolbar = findViewById(R.id.topAppBar);
+        MaterialToolbar materialToolbar = findViewById(R.id.topAppBar);
 
         materialToolbar.setOnMenuItemClickListener(item -> {
             int ID = item.getItemId();

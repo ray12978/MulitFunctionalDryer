@@ -53,5 +53,6 @@
     <string name="extend_device_text">子吹風裝置</string>
     <string name="unknown_device_text">不支援的裝置</string>
     <string name="select_correct_device_first_text">請先選擇欲連線裝置</string>
+    <string name="temperature_unit">°C</string>
 
 </resources>
