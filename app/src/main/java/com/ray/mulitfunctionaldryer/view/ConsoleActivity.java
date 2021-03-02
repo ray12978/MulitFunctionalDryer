@@ -3,6 +3,7 @@ package com.ray.mulitfunctionaldryer.view;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
@@ -10,6 +11,7 @@ import android.widget.RadioButton;
 import android.widget.TextView;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.android.material.snackbar.Snackbar;
 import com.ray.mulitfunctionaldryer.R;
 import com.ray.mulitfunctionaldryer.component.TimePickerDialog;
 import com.ray.mulitfunctionaldryer.component.BottomNavigation;
@@ -32,6 +34,7 @@ public class ConsoleActivity extends AppCompatActivity {
     RadioButton Dryer2RB1;
     RadioButton Dryer2RB2;
     RadioButton Dryer2RB3;
+    RadioButton Dryer2RB4;
     RadioButton FoggerRB1;
     RadioButton FoggerRB2;
     CheckBox TimerCheck;
@@ -41,7 +44,8 @@ public class ConsoleActivity extends AppCompatActivity {
     int Dryer2 = 0;
     boolean Fogger = false;
     boolean TimeMode = false;
-    boolean HeatMode = false;
+    int HeatMode = 0;
+    boolean ExtendFanMode = false;
     public static boolean isTiming = false;
     private String Times = "000";
     Button DryerStartBtn;
@@ -71,11 +75,21 @@ public class ConsoleActivity extends AppCompatActivity {
         initButtonEvent();
 
         rxTimer.interval(500, number -> {
-            if (MyApp.getTimeString().length()>1 && isTiming)
+            if (MyApp.getTimeString().length() > 1 && isTiming)
                 TimerText.setText(MyApp.getTimeString());
         });
     }
 
+    private boolean VerifyMainDeviceSett(){
+        boolean ans = true;
+        return ans;
+    }
+    private boolean VerifyExtendDeviceSett(){
+        boolean ans = true;
+        if(DeviceType == 2 && HeatMode != 0 && !ExtendFanMode) ans = false;
+        if(DeviceType == 2 && !Dryer1RB1.isChecked() && !Dryer1RB2.isChecked()) ans = false;
+        return ans;
+    }
     private void initConsole() {
         TimerText = findViewById(R.id.TimerTV);
         TimerText.setOnClickListener(v -> dialog.showDialog());
@@ -85,6 +99,7 @@ public class ConsoleActivity extends AppCompatActivity {
         Dryer2RB1 = findViewById(R.id.Dryer2RBtn1);
         Dryer2RB2 = findViewById(R.id.Dryer2RBtn2);
         Dryer2RB3 = findViewById(R.id.Dryer2RBtn3);
+        Dryer2RB4 = findViewById(R.id.Dryer2RBtn4);
         FoggerRB1 = findViewById(R.id.ForRBtnOn);
         FoggerRB2 = findViewById(R.id.ForRBtnOff);
         TimerCheck = findViewById(R.id.TimerCheck);
@@ -93,27 +108,35 @@ public class ConsoleActivity extends AppCompatActivity {
     }
 
     private void initView() {
-        TextView textView = findViewById(R.id.textView5);
         TextView DryerTitle2 = findViewById(R.id.DryerTitle2);
         TextView DryerTitle1 = findViewById(R.id.DryerTitle1);
+        TextView FoggerTitle = findViewById(R.id.textView6);
+        RadioButton FoggerRBOn = findViewById(R.id.ForRBtnOn);
+        RadioButton FoggerRBOff = findViewById(R.id.ForRBtnOff);
 
         DeviceType = MyApp.getDeviceIndex();
-        if (DeviceType == 2) {
-            Dryer2RB1.setText(getString(R.string.on_text));
-            Dryer2RB2.setText(getString(R.string.off_text));
-            Dryer2RB3.setVisibility(View.INVISIBLE);
-            textView.setVisibility(View.INVISIBLE);
+        if (DeviceType == 2) { //若為子裝置
+            Dryer1RB1.setText(getString(R.string.on_text));
+            Dryer1RB2.setText(getString(R.string.off_text));
+            Dryer1RB3.setVisibility(View.INVISIBLE);
+            Dryer2RB4.setVisibility(View.VISIBLE);
             DryerTitle2.setText(getString(R.string.heat_title));
-            DryerTitle1.setText(getString(R.string.extend_radio_button_title));
+            DryerTitle1.setText(getString(R.string.dryer_title));
+            FoggerTitle.setVisibility(View.INVISIBLE);
+            FoggerRBOn.setVisibility(View.INVISIBLE);
+            FoggerRBOff.setVisibility(View.INVISIBLE);
         }
-        if (DeviceType == 1) {
-            Dryer2RB1.setText(getString(R.string.radiobutton_text_0));
-            Dryer2RB2.setText(getString(R.string.radiobutton_text_1));
-            Dryer2RB3.setVisibility(View.VISIBLE);
-            textView.setVisibility(View.VISIBLE);
+        if (DeviceType == 1) { //若為主裝置
+            Dryer1RB1.setText(getString(R.string.radiobutton_text_0));
+            Dryer1RB2.setText(getString(R.string.radiobutton_text_1));
+            Dryer1RB3.setVisibility(View.VISIBLE);
+            Dryer2RB4.setVisibility(View.INVISIBLE);
             DryerTitle2.setVisibility(View.VISIBLE);
             DryerTitle1.setText(getString(R.string.radio_btn_title_1));
             DryerTitle2.setText(getString(R.string.radio_btn_title_2));
+            FoggerTitle.setVisibility(View.VISIBLE);
+            FoggerRBOn.setVisibility(View.VISIBLE);
+            FoggerRBOff.setVisibility(View.VISIBLE);
         }
     }
 
@@ -122,9 +145,17 @@ public class ConsoleActivity extends AppCompatActivity {
             try {
                 getData();
                 setBTMsg(DeviceType);
-                MyAppInst.WriteBT(BTMsg.toString());
-                MyAppInst.StartCount();
-                isTiming = true;
+                if (!VerifyExtendDeviceSett()) {
+                    makeSnack(getString(R.string.open_dryer_and_heat_warn));
+                } else {
+                    if (!MyApp.getConnected()) makeSnack(getString(R.string.bluetooth_lost_warn));
+                    else if (BTMsg.length() == 0) makeSnack(getString(R.string.lost_setting_warn));
+                    else {
+                        MyAppInst.WriteBT(BTMsg.toString());
+                        MyAppInst.StartCount();
+                        isTiming = true;
+                    }
+                }
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -137,7 +168,7 @@ public class ConsoleActivity extends AppCompatActivity {
                 MyApp.setTimeString(getString(R.string.timer_default_value));
                 MyApp.setTimeSaver(timestamp);
                 TimerText.setText(getString(R.string.timer_default_value));
-                MyAppInst.WriteBT("$NND00YN000O");
+                MyAppInst.WriteBT(getString(R.string.default_bluetooth_msg));
 
             } catch (Exception e) {
                 e.printStackTrace();
@@ -148,20 +179,34 @@ public class ConsoleActivity extends AppCompatActivity {
     private void getData() {
         DeviceType = MyApp.getDeviceIndex();
         //DeviceType = 2;
-        if (Dryer1RB1.isChecked()) Dryer1 = 0;
-        if (Dryer1RB2.isChecked()) Dryer1 = 1;
+        if (Dryer1RB1.isChecked()) {
+            if (DeviceType == 2) ExtendFanMode = true;
+            else Dryer1 = 0;
+
+        }
+        if (Dryer1RB2.isChecked()) {
+            if (DeviceType == 2) ExtendFanMode = false;
+            else Dryer1 = 1;
+        }
         if (Dryer1RB3.isChecked()) Dryer1 = 2;
         if (Dryer2RB1.isChecked()) {
             if (DeviceType == 2)
-                HeatMode = true;
+                HeatMode = 0;
             else Dryer2 = 0;
         }
         if (Dryer2RB2.isChecked()) {
             if (DeviceType == 2)
-                HeatMode = false;
+                HeatMode = 1;
             else Dryer2 = 1;
         }
-        if (Dryer2RB3.isChecked()) Dryer2 = 2;
+        if (Dryer2RB3.isChecked()) {
+            if (DeviceType == 2)
+                HeatMode = 2;
+            else Dryer2 = 2;
+        }
+        if (Dryer2RB4.isChecked()) {
+            HeatMode = 3;
+        }
         if (FoggerRB1.isChecked()) Fogger = true;
         if (FoggerRB2.isChecked()) Fogger = false;
         TimeMode = !TimerCheck.isChecked();
@@ -171,18 +216,23 @@ public class ConsoleActivity extends AppCompatActivity {
         BTMsg = new StringBuffer();
         BTMsg.append('$');
         BTMsg.append('Y');
+
         if (Fogger && index == 1) BTMsg.append('Y');
         else if (index == 1) BTMsg.append('N');
+
         BTMsg.append('D');
-        BTMsg.append(Dryer1);
-        if (index == 1)
-            BTMsg.append(Dryer2);
-        if (index == 2 && HeatMode)
-            BTMsg.append('Y');
-        else if (index == 2)
-            BTMsg.append('N');
+
+        if (index == 1) BTMsg.append(Dryer1);
+        else if (index == 2) BTMsg.append(HeatMode);
+
+        if (index == 1) BTMsg.append(Dryer2);
+
+        if (index == 2 && ExtendFanMode) BTMsg.append('Y');
+        else if (index == 2) BTMsg.append('N');
+
         if (TimeMode) BTMsg.append('Y');
         else BTMsg.append('N');
+
         BTMsg.append(Times);
         BTMsg.append('O');
     }
@@ -246,5 +296,11 @@ public class ConsoleActivity extends AppCompatActivity {
                 } else System.out.println("Sel false");
             }
         };
+    }
+
+    private void makeSnack(String msg) {
+        Snackbar snackbar = Snackbar.make(TimerText, msg, Snackbar.LENGTH_LONG)
+                .setAction("OK", view -> Log.i("SNACKBAR", "OK"));
+        snackbar.show();
     }
 }

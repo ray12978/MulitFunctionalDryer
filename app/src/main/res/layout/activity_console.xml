@@ -13,6 +13,7 @@
         android:layout_marginStart="16dp"
         android:layout_marginBottom="30dp"
         android:text="@string/timer_checkbox_text"
+        android:textSize="15sp"
         app:layout_constraintBottom_toTopOf="@+id/Bottom_Main"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView7" />
@@ -100,6 +101,16 @@
         app:layout_constraintStart_toEndOf="@+id/Dryer2RBtn2"
         app:layout_constraintTop_toBottomOf="@+id/DryerTitle2" />
 
+    <RadioButton
+        android:id="@+id/Dryer2RBtn4"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/radiobutton_text_3"
+        android:layout_marginStart="50dp"
+        android:layout_marginTop="24dp"
+        app:layout_constraintStart_toEndOf="@+id/Dryer2RBtn3"
+        app:layout_constraintTop_toBottomOf="@+id/DryerTitle2" />
+
     <TextView
         android:id="@+id/textView7"
         android:layout_width="wrap_content"
@@ -121,17 +132,6 @@
         android:textSize="20sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/Dryer1RBtn1" />
-
-    <TextView
-        android:id="@+id/textView5"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="24dp"
-        android:layout_marginTop="24dp"
-        android:text="@string/radiobutton_value_unit_text"
-        android:textSize="20sp"
-        app:layout_constraintStart_toEndOf="@+id/Dryer2RBtn3"
-        app:layout_constraintTop_toBottomOf="@+id/DryerTitle2" />
 
     <TextView
         android:id="@+id/DryerTitle1"
@@ -156,17 +156,6 @@
         app:layout_constraintTop_toBottomOf="@+id/Dryer1RBtn1" />
 
     <TextView
-        android:id="@+id/textView4"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="24dp"
-        android:layout_marginTop="24dp"
-        android:text="@string/radiobutton_value_unit_text"
-        android:textSize="20sp"
-        app:layout_constraintStart_toEndOf="@+id/Dryer1RBtn3"
-        app:layout_constraintTop_toBottomOf="@+id/DryerTitle1" />
-
-    <TextView
         android:id="@+id/TimerTV"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -174,6 +163,7 @@
         android:layout_marginTop="60dp"
         android:text="@string/timer_default_value"
         android:textSize="40sp"
+        android:background="@drawable/click_effect"
         app:layout_constraintStart_toEndOf="@+id/textView7"
         app:layout_constraintTop_toBottomOf="@+id/ForRBtnOff" />
 
@@ -191,7 +181,7 @@
         android:id="@+id/DryerRG2"
         android:layout_width="0dp"
         android:layout_height="200dp"
-        app:constraint_referenced_ids="Dryer2RBtn1,Dryer2RBtn2,Dryer2RBtn3"
+        app:constraint_referenced_ids="Dryer2RBtn1,Dryer2RBtn2,Dryer2RBtn3,Dryer2RBtn4"
         app:layout_constraintBottom_toTopOf="@+id/Bottom_Main"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -227,10 +217,6 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="72dp"
         android:layout_marginBottom="30dp"
-
-        android:backgroundTint="@color/colorPrimary"
-        android:drawableTint="@color/colorPrimary"
-        android:shadowColor="@color/colorPrimary"
         android:background="@drawable/button"
         android:text="@string/start_button_text"
         android:textColor="@color/white"
@@ -243,7 +229,7 @@
         android:layout_height="wrap_content"
         android:layout_marginEnd="72dp"
         android:layout_marginBottom="30dp"
-        android:backgroundTint="@color/colorPrimary"
+        android:background="@drawable/button"
         android:text="@string/cancel_button_text"
         android:textColor="@color/white"
         app:layout_constraintBottom_toTopOf="@+id/Bottom_Main"

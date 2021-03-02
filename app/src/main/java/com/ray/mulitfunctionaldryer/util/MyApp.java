@@ -132,6 +132,7 @@ public class MyApp extends Application {
         try {
             socket.close();
             socket = null;
+            isConnected = false;
             inputStream = null;
             outputStream = null;
         } catch (IOException e) {

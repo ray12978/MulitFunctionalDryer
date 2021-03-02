@@ -5,6 +5,7 @@
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
+        <item name="android:colorControlHighlight">@color/purple_200</item>
     </style>
     <style name="Activity.Theme" mce_bogus="1" parent="AppTheme.NoActionBar">
 
@@ -54,4 +55,5 @@
         <item name="android:textSize">30sp</item>
         <item name="colorControlNormal">@android:color/transparent</item>
     </style>
+
 </resources>
