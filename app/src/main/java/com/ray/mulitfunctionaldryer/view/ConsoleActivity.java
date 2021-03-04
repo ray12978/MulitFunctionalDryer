@@ -59,7 +59,7 @@ public class ConsoleActivity extends AppCompatActivity {
      * 1 為 主吹風裝置
      * 2 為 子吹風裝置
      */
-    int DeviceType = 0;
+    int DeviceType = 1;
 
     int[] timestamp = new int[4];
 
@@ -68,11 +68,11 @@ public class ConsoleActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_console);
         BottomNavInit();
-        setToolbar();
         TimerPicker();
         initConsole();
         initView();
         initButtonEvent();
+        setToolbar();
 
         rxTimer.interval(500, number -> {
             if (MyApp.getTimeString().length() > 1 && isTiming)
@@ -92,7 +92,10 @@ public class ConsoleActivity extends AppCompatActivity {
     }
     private void initConsole() {
         TimerText = findViewById(R.id.TimerTV);
-        TimerText.setOnClickListener(v -> dialog.showDialog());
+        TimerText.setOnClickListener(v -> {
+            if(!TimerCheck.isChecked()) dialog.showDialog();
+            else if(TimerCheck.isChecked()) makeSnack("已停用定時功能");
+        });
         Dryer1RB1 = findViewById(R.id.Dryer1RBtn1);
         Dryer1RB2 = findViewById(R.id.Dryer1RBtn2);
         Dryer1RB3 = findViewById(R.id.Dryer1RBtn3);
@@ -105,6 +108,8 @@ public class ConsoleActivity extends AppCompatActivity {
         TimerCheck = findViewById(R.id.TimerCheck);
         DryerStartBtn = findViewById(R.id.DryerStartBtn);
         DryerStopBtn = findViewById(R.id.DryerCancelBtn);
+
+        DeviceType = MyApp.getDeviceIndex();
     }
 
     private void initView() {
@@ -177,7 +182,7 @@ public class ConsoleActivity extends AppCompatActivity {
     }
 
     private void getData() {
-        DeviceType = MyApp.getDeviceIndex();
+
         //DeviceType = 2;
         if (Dryer1RB1.isChecked()) {
             if (DeviceType == 2) ExtendFanMode = true;
@@ -245,7 +250,9 @@ public class ConsoleActivity extends AppCompatActivity {
 
     private void setToolbar() {
         Toolbar toolbar = findViewById(R.id.toolbar);
-        toolbar.setTitle(getString(R.string.console_toolbar_title));
+        if(DeviceType == 0) toolbar.setTitle(getString(R.string.console_toolbar_title_unknown));
+        if(DeviceType == 1) toolbar.setTitle(getString(R.string.console_toolbar_title_main));
+        if(DeviceType == 2) toolbar.setTitle(getString(R.string.console_toolbar_title_extend));
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setHomeButtonEnabled(true);

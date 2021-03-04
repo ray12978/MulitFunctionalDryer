@@ -10,11 +10,11 @@
         android:id="@+id/TimerCheck"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginBottom="30dp"
+        android:layout_marginStart="25dp"
+        android:layout_marginTop="80dp"
         android:text="@string/timer_checkbox_text"
-        android:textSize="15sp"
-        app:layout_constraintBottom_toTopOf="@+id/Bottom_Main"
+        android:textColor="@color/blue_500"
+        android:textSize="16sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView7" />
 
@@ -22,32 +22,35 @@
         android:id="@+id/Dryer1RBtn1"
         android:layout_width="80sp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-
+        android:layout_marginStart="25dp"
         android:layout_marginTop="24dp"
         android:text="@string/radiobutton_text_0"
+        android:textColor="@color/blue_500"
+        android:textSize="@dimen/text_size"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/DryerTitle1" />
 
     <RadioButton
         android:id="@+id/Dryer1RBtn2"
-        android:layout_width="wrap_content"
+        android:layout_width="80sp"
         android:layout_height="wrap_content"
-
         android:layout_marginStart="20dp"
         android:layout_marginTop="24dp"
         android:text="@string/radiobutton_text_1"
+        android:textColor="@color/blue_500"
+        android:textSize="@dimen/text_size"
         app:layout_constraintStart_toEndOf="@+id/Dryer1RBtn1"
         app:layout_constraintTop_toBottomOf="@+id/DryerTitle1" />
 
     <RadioButton
         android:id="@+id/Dryer1RBtn3"
-        android:layout_width="wrap_content"
+        android:layout_width="80sp"
         android:layout_height="wrap_content"
-
-        android:layout_marginStart="50dp"
+        android:layout_marginStart="20dp"
         android:layout_marginTop="24dp"
         android:text="@string/radiobutton_text_2"
+        android:textColor="@color/blue_500"
+        android:textSize="@dimen/text_size"
         app:layout_constraintStart_toEndOf="@+id/Dryer1RBtn2"
         app:layout_constraintTop_toBottomOf="@+id/DryerTitle1" />
 
@@ -55,9 +58,11 @@
         android:id="@+id/Dryer2RBtn1"
         android:layout_width="80sp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
+        android:layout_marginStart="25dp"
         android:layout_marginTop="24dp"
         android:text="@string/radiobutton_text_0"
+        android:textColor="@color/blue_500"
+        android:textSize="@dimen/text_size"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/DryerTitle2" />
 
@@ -65,49 +70,59 @@
         android:id="@+id/ForRBtnOn"
         android:layout_width="80sp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
+        android:layout_marginStart="25dp"
         android:layout_marginTop="24dp"
         android:text="@string/on_text"
+        android:textColor="@color/blue_500"
+        android:textSize="@dimen/text_size"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView6" />
 
     <RadioButton
         android:id="@+id/ForRBtnOff"
-        android:layout_width="wrap_content"
+        android:layout_width="80sp"
         android:layout_height="wrap_content"
         android:layout_marginStart="20dp"
         android:layout_marginTop="24dp"
         android:text="@string/off_text"
+        android:textColor="@color/blue_500"
+        android:textSize="@dimen/text_size"
         app:layout_constraintStart_toEndOf="@+id/ForRBtnOn"
         app:layout_constraintTop_toBottomOf="@+id/textView6" />
 
     <RadioButton
         android:id="@+id/Dryer2RBtn2"
-        android:layout_width="wrap_content"
+        android:layout_width="80sp"
         android:layout_height="wrap_content"
         android:layout_marginStart="20dp"
         android:layout_marginTop="24dp"
         android:text="@string/radiobutton_text_1"
+        android:textColor="@color/blue_500"
+        android:textSize="@dimen/text_size"
         app:layout_constraintStart_toEndOf="@+id/Dryer2RBtn1"
         app:layout_constraintTop_toBottomOf="@+id/DryerTitle2" />
 
     <RadioButton
         android:id="@+id/Dryer2RBtn3"
-        android:layout_width="wrap_content"
+        android:layout_width="80sp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="50dp"
+        android:layout_marginStart="20dp"
         android:layout_marginTop="24dp"
         android:text="@string/radiobutton_text_2"
+        android:textColor="@color/blue_500"
+        android:textSize="@dimen/text_size"
         app:layout_constraintStart_toEndOf="@+id/Dryer2RBtn2"
         app:layout_constraintTop_toBottomOf="@+id/DryerTitle2" />
 
     <RadioButton
         android:id="@+id/Dryer2RBtn4"
-        android:layout_width="wrap_content"
+        android:layout_width="80sp"
         android:layout_height="wrap_content"
-        android:text="@string/radiobutton_text_3"
-        android:layout_marginStart="50dp"
+        android:layout_marginStart="20dp"
         android:layout_marginTop="24dp"
+        android:text="@string/radiobutton_text_3"
+        android:textColor="@color/blue_500"
+        android:textSize="@dimen/text_size"
         app:layout_constraintStart_toEndOf="@+id/Dryer2RBtn3"
         app:layout_constraintTop_toBottomOf="@+id/DryerTitle2" />
 
@@ -115,9 +130,10 @@
         android:id="@+id/textView7"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="80dp"
+        android:layout_marginStart="25dp"
+        android:layout_marginTop="60dp"
         android:text="@string/time_setting_title"
+        android:textColor="@color/blue_500"
         android:textSize="20sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/ForRBtnOn" />
@@ -126,9 +142,10 @@
         android:id="@+id/textView6"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
+        android:layout_marginStart="25dp"
         android:layout_marginTop="150dp"
         android:text="@string/fogger_setting_title"
+        android:textColor="@color/blue_500"
         android:textSize="20sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/Dryer1RBtn1" />
@@ -137,9 +154,10 @@
         android:id="@+id/DryerTitle1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
+        android:layout_marginStart="25dp"
         android:layout_marginTop="32dp"
         android:text="@string/radio_btn_title_1"
+        android:textColor="@color/blue_500"
         android:textSize="20sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/include" />
@@ -148,9 +166,10 @@
         android:id="@+id/DryerTitle2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
+        android:layout_marginStart="25dp"
         android:layout_marginTop="32dp"
         android:text="@string/radio_btn_title_2"
+        android:textColor="@color/blue_500"
         android:textSize="20sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/Dryer1RBtn1" />
@@ -160,10 +179,11 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="60dp"
-        android:layout_marginTop="60dp"
-        android:text="@string/timer_default_value"
-        android:textSize="40sp"
+        android:layout_marginTop="40dp"
         android:background="@drawable/click_effect"
+        android:text="@string/timer_default_value"
+        android:textColor="@color/blue_500"
+        android:textSize="40sp"
         app:layout_constraintStart_toEndOf="@+id/textView7"
         app:layout_constraintTop_toBottomOf="@+id/ForRBtnOff" />
 
@@ -235,6 +255,5 @@
         app:layout_constraintBottom_toTopOf="@+id/Bottom_Main"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@+id/DryerStartBtn" />
-
 
 </androidx.constraintlayout.widget.ConstraintLayout>

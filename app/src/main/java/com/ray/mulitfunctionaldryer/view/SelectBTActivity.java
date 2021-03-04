@@ -9,6 +9,11 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
+import android.graphics.Rect;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -45,6 +50,8 @@ public class SelectBTActivity extends AppCompatActivity {
     public boolean isConnected = false;
     private Toolbar toolbar;
     private Button buttonDiscovery;
+    private Paint paint = new Paint();
+    private Drawable mDividingLineDrawable;
 
     private final BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
         @Override
@@ -90,14 +97,14 @@ public class SelectBTActivity extends AppCompatActivity {
         final LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         layoutManager.setOrientation(RecyclerView.VERTICAL);
 
+        //final DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(this, layoutManager.getOrientation());
         final DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(this, layoutManager.getOrientation());
-
         recyclerViewAdapter = new RecyclerViewAdapter();
         RecyclerView recyclerView = findViewById(R.id.recyclerView);
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setAdapter(recyclerViewAdapter);
-        recyclerView.addItemDecoration(dividerItemDecoration);
-
+        //recyclerView.addItemDecoration(dividerItemDecoration);
+        recyclerView.addItemDecoration(getItemDecoration());
         bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
         if (bluetoothAdapter == null) {
             new AlertDialog.Builder(this)
@@ -112,6 +119,32 @@ public class SelectBTActivity extends AppCompatActivity {
                     })
                     .show();
         }
+    }
+
+    private RecyclerView.ItemDecoration getItemDecoration() {
+        mDividingLineDrawable = getDrawable(R.drawable.diviter_blue);
+        return new RecyclerView.ItemDecoration() {
+            @Override
+            public void getItemOffsets(@NonNull Rect outRect, @NonNull View view, @NonNull RecyclerView parent, @NonNull RecyclerView.State state) {
+                outRect.top = 15;//这里增加了20的上边距
+
+            }
+
+            @Override
+            public void onDraw(@NonNull Canvas c, @NonNull RecyclerView parent, @NonNull RecyclerView.State state) {
+                int count = parent.getChildCount();
+                parent.getPaddingLeft();
+                for (int i = 1; i < count; i++) {
+                    View view = parent.getChildAt(i);
+                    int top = view.getTop();
+                    int bottom = view.getBottom();
+                    int left = view.getLeft();
+                    int right = view.getRight();
+                    mDividingLineDrawable.setBounds(left , top - 15, right, top);
+                    mDividingLineDrawable.draw(c);
+                }
+            }
+        };
     }
 
     private void initDiscoverBtn(){

@@ -5,7 +5,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".view.MainActivity"
-    android:id="@+id/ActMain">
+    android:id="@+id/ActMain"
+    android:background="@drawable/home_background">
 
     <TextView
         android:id="@+id/textView12"
@@ -14,9 +15,10 @@
         android:layout_marginStart="10dp"
         android:layout_marginTop="30dp"
         android:text="@string/temperature_unit"
+        android:textColor="@color/white"
         android:textSize="40sp"
-        android:typeface="monospace"
 
+        android:typeface="monospace"
         app:layout_constraintStart_toEndOf="@+id/TempTV"
         app:layout_constraintTop_toTopOf="@+id/TempTV" />
 
@@ -26,9 +28,10 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="50dp"
         android:layout_marginTop="60dp"
-        android:textSize="30sp"
         android:text="@string/TemperatureTitle"
+        android:textColor="@color/white"
 
+        android:textSize="30sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/DryerStaTV" />
 
@@ -38,6 +41,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="24dp"
         android:layout_marginTop="16dp"
+        android:textColor="@color/white"
         android:textSize="20sp"
         app:layout_constraintStart_toEndOf="@+id/DryerStaTV"
         app:layout_constraintTop_toBottomOf="@+id/appBarLayout2" />
@@ -46,7 +50,7 @@
         android:id="@+id/piechart"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginTop="100dp"
+        android:layout_marginTop="250dp"
         android:layout_marginBottom="32dp"
         app:layout_constraintBottom_toTopOf="@+id/Bottom_Main"
         app:layout_constraintEnd_toEndOf="parent"
@@ -61,6 +65,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="50dp"
         android:layout_marginTop="16dp"
+        android:textColor="@color/white"
         android:textSize="20sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/appBarLayout2" />
@@ -95,12 +100,13 @@
         android:layout_width="80sp"
         android:layout_height="wrap_content"
         android:layout_marginStart="60dp"
-        android:layout_marginTop="32dp"
         android:text="15"
+        android:textColor="@color/white"
         android:textSize="60sp"
         android:typeface="monospace"
+        app:layout_constraintBottom_toBottomOf="@+id/textView10"
         app:layout_constraintStart_toEndOf="@+id/textView10"
-        app:layout_constraintTop_toTopOf="@+id/piechart" />
+        app:layout_constraintTop_toTopOf="@+id/textView10" />
 
     <ImageView
         android:id="@+id/BTStaLight"

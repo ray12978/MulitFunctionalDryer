@@ -2,8 +2,8 @@
     <!-- Base application theme. -->
     <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
         <!-- Customize your theme here. -->
-        <item name="colorPrimary">@color/colorPrimary</item>
-        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorPrimary">@color/blue_500</item>
+        <item name="colorPrimaryDark">@color/blue_700</item>
         <item name="colorAccent">@color/colorAccent</item>
         <item name="android:colorControlHighlight">@color/purple_200</item>
     </style>
@@ -51,9 +51,14 @@
         <item name="paddingEnd">80dp</item>
     </style>
     <style name="AppTheme.Picker" parent="Theme.AppCompat.Light.Dialog.MinWidth" >
-        <item name="android:textColorPrimary">@android:color/black</item>
+        <item name="android:textColorPrimary">@color/blue_500</item>
         <item name="android:textSize">30sp</item>
         <item name="colorControlNormal">@android:color/transparent</item>
+    </style>
+    <style name="Divider">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">5dp</item>
+        <item name="android:background">@color/yellow_500</item>
     </style>
 
 </resources>

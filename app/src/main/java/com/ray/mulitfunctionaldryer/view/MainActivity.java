@@ -114,7 +114,7 @@ public class MainActivity extends AppCompatActivity {
         PieChart pieChart = findViewById(R.id.piechart);
         waterPieChart = new WaterPieChart(pieChart);
         waterPieChart.InitChart();
-        waterPieChart.setPieChartValue(initWater);//test
+        waterPieChart.setPieChartValue(initWater);
         TempView.setText(String.valueOf(initTemperature));
         BottomNavInit();
         InitToolbar();
@@ -126,6 +126,8 @@ public class MainActivity extends AppCompatActivity {
         setDryerInfoText(BTName);
         initDryerSta();
         InitEvent();
+
+        waterPieChart.setPieChartValue(30f);
     }
 
     void UpdateSensorData() {
