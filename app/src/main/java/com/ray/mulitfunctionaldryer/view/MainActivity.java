@@ -29,8 +29,6 @@ import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.schedulers.Schedulers;
 
 public class MainActivity extends AppCompatActivity {
-    public StringBuffer BTSendMsg = new StringBuffer("$NND00N000O");
-    private final int BT_MSG_LEN = 11;
 
     /**
      * View
@@ -59,33 +57,14 @@ public class MainActivity extends AppCompatActivity {
     private final CompositeDisposable compositeDisposable = new CompositeDisposable();
     private final RxBluetooth rxBluetooth = new RxBluetooth(this);
     private final RxTimer rxTimer1 = new RxTimer();
-    private final RxTimer rxTimer2 = new RxTimer();
-    /**
-     * Testing saveInstance
-     */
-    String StrTest;
-    int IntTest;
-
-    //todo add button to test write bluetooth strings
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        if (null != savedInstanceState) {//因為Activity的生命周期原因 ，if 語句放著不一定能執行得到 應該結合實際情況
-
-            IntTest = savedInstanceState.getInt("IntTest");
-
-            StrTest = savedInstanceState.getString("StrTest");
-            System.out.println("getting");
-        }
         setContentView(R.layout.activity_main);
         Initialize();
-
-        Log.d("Act", "onCreate");
-        System.out.println("String:" + StrTest);
-        System.out.println("Int:" + IntTest);
         timer();
     }
 
@@ -126,8 +105,6 @@ public class MainActivity extends AppCompatActivity {
         setDryerInfoText(BTName);
         initDryerSta();
         InitEvent();
-
-        waterPieChart.setPieChartValue(30f);
     }
 
     void UpdateSensorData() {
@@ -157,12 +134,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void makeSnack(String msg) {
         Snackbar snackbar = Snackbar.make(DryerInfoText, msg, Snackbar.LENGTH_LONG)
-                .setAction("OK", new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        Log.i("SNACKBAR", "OK");
-                    }
-                });
+                .setAction("OK", view -> Log.i("SNACKBAR", "OK"));
         snackbar.show();
     }
 
@@ -215,9 +187,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void setBTStatus() {
-        MyAppInst.onConnectedDevice = ans -> {
-            isConnected = ans;
-        };
+        MyAppInst.onConnectedDevice = ans -> isConnected = ans;
     }
 
     private void BottomNavInit() {
