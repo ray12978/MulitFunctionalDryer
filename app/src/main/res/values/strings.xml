@@ -4,7 +4,7 @@
     <string name="item2_title">定時模式</string>
     <string name="item3_title">藍芽設定</string>
     <string name="top_appbar_item1">藍芽連線</string>
-    <string name="top_appbar_item2">重新整理</string>
+    <string name="top_appbar_item2">切斷藍芽連線</string>
     <string name="console_toolbar_title_main">主吹風裝置設定</string>
     <string name="console_toolbar_title_extend">子吹風裝置設定</string>
     <string name="console_toolbar_title_unknown">不支援的裝置</string>
@@ -62,6 +62,7 @@
     <string name="bluetooth_lost_warn">啟動失敗，請先連線藍芽</string>
     <string name="open_dryer_and_heat_warn">啟動失敗，請同時開啟吹風裝置與加熱功能</string>
     <string name="lost_setting_warn">啟動失敗，請先確認設定</string>
+    <string name="bluetooth_conn_failed_text">藍芽連線失敗</string>
     <string name="default_bluetooth_msg">$NND00YN000O</string>
     <string name="blue_700_string">"#192E5B"</string>
     <string name="blue_500_string">"#1D65A6"</string>

@@ -9,8 +9,8 @@
         android:contentDescription="@string/top_appbar_item1"
         app:showAsAction="ifRoom" />
     <item
-        android:id="@+id/PageRefresh"
-        android:icon="@drawable/drawable_refresh"
+        android:id="@+id/DisconnBT"
+        android:icon="@drawable/drawable_bluetooth_disabled"
         android:title="@string/top_appbar_item2"
         android:contentDescription="@string/top_appbar_item2"
         app:showAsAction="ifRoom" />

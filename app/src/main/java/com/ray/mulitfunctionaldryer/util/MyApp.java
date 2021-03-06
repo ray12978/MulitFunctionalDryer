@@ -6,44 +6,28 @@ import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
-import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
-import android.content.ContentResolver;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.graphics.Color;
-import android.media.AudioAttributes;
-import android.net.Uri;
 import android.os.Build;
-import android.text.format.DateFormat;
 import android.util.Log;
-import android.widget.Button;
-
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.util.Calendar;
-import java.util.UUID;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.atomic.AtomicInteger;
 
 import com.github.ivbaranov.rxbluetooth.BluetoothConnection;
 import com.github.ivbaranov.rxbluetooth.RxBluetooth;
 import com.ray.mulitfunctionaldryer.R;
-import com.ray.mulitfunctionaldryer.component.TimePickerDialog;
-import com.ray.mulitfunctionaldryer.component.WaterPieChart;
 import com.ray.mulitfunctionaldryer.view.ConsoleActivity;
 import com.ray.mulitfunctionaldryer.view.MainActivity;
 
-import io.reactivex.Observable;
-import io.reactivex.ObservableEmitter;
-import io.reactivex.ObservableOnSubscribe;
-import io.reactivex.Observer;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.util.UUID;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
+
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
-import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 
 
@@ -68,9 +52,7 @@ public class MyApp extends Application {
     private String TAG = "BTSta";
     char MAIN_DRYER_FIRST_CHAR = 'M';
     char EXTEND_DRYER_FIRST_CHAR = 'E';
-    //Flag
-    public FlagAddress BTRevSta = new FlagAddress(false);
-    public FlagAddress BTRevFlag = new FlagAddress(true);
+
     public static int isMainDevice = 0;
     public static boolean WaterBeeped = false;
     public static boolean TempBeeped = false;
@@ -247,11 +229,9 @@ public class MyApp extends Application {
                     readCnt.getAndIncrement();
                     StrProcess(BTValTmp);
                 }, throwable -> {
-                    BTRevSta.Flag = false;
                     throwable.printStackTrace();
                     System.out.println("Recv byte Error");
                 }));
-        BTRevSta.Flag = false;
     }
 
     protected void SavByte(int count, byte BTByte) {
@@ -340,7 +320,6 @@ public class MyApp extends Application {
         buffer = new byte[256];
         readCnt = new AtomicInteger();
         BTValTmp.delete(0, BTValTmp.length());
-        BTRevFlag.Flag = true;
         StrPosition = new int[3];
     }
 

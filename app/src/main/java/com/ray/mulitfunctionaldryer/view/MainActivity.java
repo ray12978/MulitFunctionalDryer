@@ -68,13 +68,10 @@ public class MainActivity extends AppCompatActivity {
         timer();
     }
 
-    void timer() {
+    private void timer() {
         rxTimer1.interval(1000, number -> {
             if (MyApp.getConnected()) UpdateSensorData();
         });
-       /* rxTimer2.interval(2000, number -> {
-            System.out.println(a.getAndIncrement());
-        });*/
     }
 
     private void Initialize() {
@@ -107,13 +104,13 @@ public class MainActivity extends AppCompatActivity {
         InitEvent();
     }
 
-    void UpdateSensorData() {
+    private void UpdateSensorData() {
 
         int TempValue = MyAppInst.getTempIndex();
         int WaterVolume = MyAppInst.getWaterIndex();
         float f = (float) WaterVolume / 750 * 100;
 
-        if (f!=0 && f <= 15 && !MyApp.WaterBeeped) {
+        if (f != 0 && f <= 15 && !MyApp.WaterBeeped) {
             MyAppInst.WaterEmptyNotify();
             MyApp.WaterBeeped = true;
         } else if (f > 15) MyApp.WaterBeeped = false;
@@ -140,7 +137,7 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onStart() {
-        setBTStatus();
+        getBTStatus();
         if (!MyApp.getConnected()) makeSnack(getString(R.string.select_dryer_first_message));
         super.onStart();
     }
@@ -186,23 +183,17 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private void setBTStatus() {
-        MyAppInst.onConnectedDevice = ans -> isConnected = ans;
+    private void getBTStatus() {
+        MyAppInst.onConnectedDevice = connected -> {
+            isConnected = connected;
+            if (!connected) makeSnack(getString(R.string.bluetooth_conn_failed_text));
+        };
     }
 
     private void BottomNavInit() {
         BottomNavigationView MyBtmNav = findViewById(R.id.Bottom_Main);
         BottomNavigation BtmNav = new BottomNavigation(this, MyBtmNav, 0);
         BtmNav.init();
-    }
-
-    @Override
-    public boolean onPrepareOptionsMenu(Menu menu) {
-        Log.d("Act", "onPrepareOptionsMenu");
-        if (isConnected)
-            menu.findItem(R.id.ConnBT).setIcon(R.drawable.drawable_bluetooth_connected);
-        if (!isConnected) menu.findItem(R.id.ConnBT).setIcon(R.drawable.drawable_bluetooth_white);
-        return super.onPrepareOptionsMenu(menu);
     }
 
     private void InitToolbar() {
@@ -215,17 +206,14 @@ public class MainActivity extends AppCompatActivity {
                     makeSnack(getString(R.string.select_correct_device_first_text));
                     return false;
                 }
-                System.out.println(BTAddress);
-                if (!MyApp.getConnected()) item.setIcon(R.drawable.drawable_bluetooth_connected);
-                else item.setIcon(R.drawable.drawable_bluetooth_white);
+                if (!MyApp.getConnected()) {
+                    BluetoothDevice device = bluetoothAdapter.getRemoteDevice(BTAddress);
+                    MyAppInst.connDevice(device);
+                } else item.setIcon(R.drawable.drawable_bluetooth_white);
 
-                BluetoothDevice device = bluetoothAdapter.getRemoteDevice(BTAddress);
-                if (!MyApp.getConnected()) MyAppInst.connDevice(device);
-                else MyAppInst.disconnect();
+            } else if (ID == R.id.DisconnBT)
+                if (MyApp.getConnected()) MyAppInst.disconnect();
 
-            } else if (ID == R.id.PageRefresh) {
-                UpdateSensorData();
-            }
             return false;
         });
     }
