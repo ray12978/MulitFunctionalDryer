@@ -184,26 +184,23 @@ public class MyApp extends Application {
     }
 
     public void connDevice(BluetoothDevice device) {
-        AtomicBoolean Sta = new AtomicBoolean(false);
         compositeDisposable.add(rxBluetooth.connectAsClient(device, serialPortUUID)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeOn(Schedulers.io())
                 .subscribe(
                         bluetoothSocket -> {
                             System.out.println("conned");
-                            socket = bluetoothSocket;
-                            ReadBT();
                             isConnected = true;
-                            Sta.set(true);
+                            socket = bluetoothSocket;
                             try {
                                 onConnectedDevice.OnConnected(true);
                             } catch (Exception e) {
                                 e.printStackTrace();
                             }
+                            ReadBT();
                         }, throwable -> {
                             isConnected = false;
                             System.out.println("error");
-                            Sta.set(false);
                             try {
                                 onConnectedDevice.OnConnected(false);
                             } catch (Exception e) {

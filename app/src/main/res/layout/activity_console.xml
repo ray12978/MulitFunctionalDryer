@@ -11,12 +11,12 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="25dp"
-        android:layout_marginTop="80dp"
+        android:layout_marginTop="30dp"
         android:text="@string/timer_checkbox_text"
         android:textColor="@color/blue_500"
         android:textSize="16sp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView7" />
+        app:layout_constraintTop_toBottomOf="@+id/TimerTV" />
 
     <RadioButton
         android:id="@+id/Dryer1RBtn1"
@@ -131,7 +131,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="25dp"
-        android:layout_marginTop="60dp"
+        android:layout_marginTop="32dp"
         android:text="@string/time_setting_title"
         android:textColor="@color/blue_500"
         android:textSize="20sp"
@@ -178,14 +178,14 @@
         android:id="@+id/TimerTV"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="60dp"
-        android:layout_marginTop="40dp"
+        android:layout_marginStart="25dp"
+        android:layout_marginTop="30dp"
         android:background="@drawable/click_effect"
         android:text="@string/timer_default_value"
         android:textColor="@color/blue_500"
         android:textSize="40sp"
-        app:layout_constraintStart_toEndOf="@+id/textView7"
-        app:layout_constraintTop_toBottomOf="@+id/ForRBtnOff" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView7" />
 
     <com.ray.mulitfunctionaldryer.component.blRadioGroup
         android:id="@+id/DryerRG1"
@@ -236,17 +236,20 @@
         android:layout_width="100sp"
         android:layout_height="wrap_content"
         android:layout_marginStart="72dp"
+        android:layout_marginTop="30dp"
         android:layout_marginBottom="30dp"
         android:background="@drawable/button"
         android:text="@string/start_button_text"
         android:textColor="@color/white"
         app:layout_constraintBottom_toTopOf="@+id/Bottom_Main"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/TimerCheck" />
 
     <Button
         android:id="@+id/DryerCancelBtn"
         android:layout_width="100sp"
         android:layout_height="wrap_content"
+        android:layout_marginTop="30dp"
         android:layout_marginEnd="72dp"
         android:layout_marginBottom="30dp"
         android:background="@drawable/button_red"
@@ -254,6 +257,6 @@
         android:textColor="@color/white"
         app:layout_constraintBottom_toTopOf="@+id/Bottom_Main"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/DryerStartBtn" />
+        app:layout_constraintTop_toBottomOf="@+id/TimerCheck" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

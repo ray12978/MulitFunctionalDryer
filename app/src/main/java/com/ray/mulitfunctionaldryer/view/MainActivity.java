@@ -3,8 +3,11 @@ package com.ray.mulitfunctionaldryer.view;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.AlertDialog;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
@@ -14,6 +17,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.github.ivbaranov.rxbluetooth.RxBluetooth;
+import com.github.ivbaranov.rxbluetooth.predicates.BtPredicate;
 import com.github.mikephil.charting.charts.PieChart;
 import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -26,6 +30,7 @@ import com.ray.mulitfunctionaldryer.util.RxTimer;
 
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
 
 public class MainActivity extends AppCompatActivity {
@@ -49,7 +54,6 @@ public class MainActivity extends AppCompatActivity {
      */
     private String BTAddress, BTName;
     private BluetoothAdapter bluetoothAdapter;
-    private boolean isConnected;
 
     /**
      * RxJava
@@ -168,7 +172,6 @@ public class MainActivity extends AppCompatActivity {
     private void setDryerSta(boolean connected) {
         if (connected) {
             DryerStaText.setText(R.string.device_connected);
-            isConnected = true;
             MyApp.isConnected = true;
             BTLight.setImageResource(R.drawable.drawable_circle);
             System.out.println("connected");
@@ -176,7 +179,6 @@ public class MainActivity extends AppCompatActivity {
         if (!connected) {
             DryerStaText.setText(R.string.device_not_connected);
             MyApp.isConnected = false;
-            isConnected = false;
             BTLight.setImageResource(R.drawable.drawable_circle_gray);
             System.out.println("not connected");
             MyApp.isDisconnected();
@@ -185,7 +187,6 @@ public class MainActivity extends AppCompatActivity {
 
     private void getBTStatus() {
         MyAppInst.onConnectedDevice = connected -> {
-            isConnected = connected;
             if (!connected) makeSnack(getString(R.string.bluetooth_conn_failed_text));
         };
     }
@@ -202,6 +203,10 @@ public class MainActivity extends AppCompatActivity {
         materialToolbar.setOnMenuItemClickListener(item -> {
             int ID = item.getItemId();
             if (ID == R.id.ConnBT) {
+                if (!bluetoothAdapter.isEnabled()) {
+                    Intent intentBluetoothEnable = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+                    startActivity(intentBluetoothEnable);
+                }
                 if (BTAddress.equals("") || BTAddress.equals("null")) {
                     makeSnack(getString(R.string.select_correct_device_first_text));
                     return false;
@@ -209,8 +214,7 @@ public class MainActivity extends AppCompatActivity {
                 if (!MyApp.getConnected()) {
                     BluetoothDevice device = bluetoothAdapter.getRemoteDevice(BTAddress);
                     MyAppInst.connDevice(device);
-                } else item.setIcon(R.drawable.drawable_bluetooth_white);
-
+                }
             } else if (ID == R.id.DisconnBT)
                 if (MyApp.getConnected()) MyAppInst.disconnect();
 
@@ -244,5 +248,29 @@ public class MainActivity extends AppCompatActivity {
                             break;
                     }
                 }));
+
+        compositeDisposable.add(rxBluetooth.observeBluetoothState()
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(Schedulers.computation())
+                .filter(BtPredicate.in(BluetoothAdapter.STATE_ON))
+                .subscribe(integer -> initDryerSta()));
+        compositeDisposable.add(rxBluetooth.observeBluetoothState()
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(Schedulers.computation())
+                .filter(BtPredicate.in(BluetoothAdapter.STATE_OFF))
+                .subscribe(integer -> {
+                    setDryerSta(false);
+                    DryerStaText.setText(R.string.bluetooth_not_open);
+                }));
+    }
+
+    public void onBackPressed() {
+        new AlertDialog.Builder(MainActivity.this)
+                .setMessage("要結束應用程式嗎?")
+                .setPositiveButton("確定", (dialog, whichButton) -> {
+                    finish();//Exit Activity
+                })
+                .setNegativeButton("取消", (dialog, whichButton) -> {
+                }).create().show();
     }
 }
