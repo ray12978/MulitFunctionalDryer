@@ -163,6 +163,9 @@ public class MainActivity extends AppCompatActivity {
         } else if (BTname.equals("DryerExtend")) {
             DryerInfoText.setText(R.string.extend_device_text);
             MyApp.setDeviceIndex(2);
+        } else if (BTname.equals(getString(R.string.device_select_not_yet_text))) {
+            DryerInfoText.setText(BTname);
+            MyApp.setDeviceIndex(0);
         } else {
             DryerInfoText.setText(R.string.unknown_device_text);
             MyApp.setDeviceIndex(0);

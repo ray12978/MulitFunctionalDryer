@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">MulitFunctionalDryer</string>
+    <string name="app_name">多合一吹風系統</string>
     <string name="item1_title">首頁</string>
     <string name="item2_title">定時模式</string>
     <string name="item3_title">藍芽設定</string>
