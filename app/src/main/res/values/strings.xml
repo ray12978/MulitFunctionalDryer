@@ -18,8 +18,8 @@
     <string name="radio_btn_title_1">吹風裝置1  段數</string>
     <string name="radio_btn_title_2">吹風裝置2  段數</string>
     <string name="radio_btn_title_3">吹風裝置3  段數</string>
-    <string name="main_time_mode_notify_title">主吹風裝置計時模式已結束</string>
-    <string name="extend_time_mode_notify_title">子吹風裝置計時模式已結束</string>
+    <string name="main_time_mode_notify_title">主吹風裝置定時模式已結束</string>
+    <string name="extend_time_mode_notify_title">子吹風裝置定時模式已結束</string>
     <string name="end_reason_normal">結束原因:正常結束</string>
     <string name="end_reason_temp">結束原因:溫度過高</string>
     <string name="end_reason_cancel">結束原因:取消動作</string>
@@ -33,7 +33,7 @@
     <string name="radiobutton_text_1">1</string>
     <string name="radiobutton_text_0">0</string>
     <string name="timer_default_value">00:00:00</string>
-    <string name="timer_checkbox_text">不使用定時功能，直接啟動直到下次關閉</string>
+    <string name="timer_checkbox_text">不使用定時器，直接啟動直到下次關閉</string>
     <string name="on_text">開啟</string>
     <string name="off_text">關閉</string>
     <string name="time_setting_title">定時時間設定</string>
@@ -49,7 +49,7 @@
     <string name="bluetooth_device_address">裝置位址</string>
     <string name="extend_radio_button_title">吹風裝置段數</string>
     <string name="heat_title">加熱功能段數</string>
-    <string name="dryer_title">吹風裝置設定</string>
+    <string name="ex_dryer_title">吹風裝置設定</string>
     <string name="select_bluetooth_toolbar_title">選擇藍芽裝置</string>
     <string name="device_select_not_yet_text">尚未選擇裝置</string>
     <string name="select_dryer_first_message">請先連線吹風裝置</string>
@@ -68,4 +68,6 @@
     <string name="blue_700_string">"#192E5B"</string>
     <string name="blue_500_string">"#1D65A6"</string>
     <string name="bluetooth_not_open">藍芽尚未開啟</string>
+    <string name="main_time_mode_start">主吹風裝置定時模式已開始</string>
+    <string name="ex_time_mode_start">子吹風裝置定時模式已開始</string>
 </resources>

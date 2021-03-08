@@ -27,6 +27,7 @@ import com.ray.mulitfunctionaldryer.component.BottomNavigation;
 import com.ray.mulitfunctionaldryer.component.WaterPieChart;
 import com.ray.mulitfunctionaldryer.util.MyApp;
 import com.ray.mulitfunctionaldryer.util.RxTimer;
+import com.ray.mulitfunctionaldryer.util.RxTimer2;
 
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
@@ -62,7 +63,6 @@ public class MainActivity extends AppCompatActivity {
     private final RxBluetooth rxBluetooth = new RxBluetooth(this);
     private final RxTimer rxTimer1 = new RxTimer();
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -77,7 +77,6 @@ public class MainActivity extends AppCompatActivity {
             if (MyApp.getConnected()) UpdateSensorData();
         });
     }
-
     private void Initialize() {
         SensorManager = getSharedPreferences("SensorVal", MODE_PRIVATE);
         float initWater = SensorManager.getFloat("water", 0);

@@ -61,6 +61,10 @@ public class RxTimer2 {
         }
     }
 
+    public boolean isDisposed(){
+        return mDisposable.isDisposed();
+    }
+
     public interface IRxNext {
         void doNext(Object number);
     }

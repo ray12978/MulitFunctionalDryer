@@ -94,6 +94,7 @@ public class MyApp extends Application {
     public static String TimerString = "";
     final RxTimer CountDownTimer = new RxTimer();
     boolean isStarted = false;
+    public static boolean isFirstTimer = true;
 
     @Override
     public void onCreate() {
@@ -126,15 +127,23 @@ public class MyApp extends Application {
         if(!isStarted && !TimerString.equals("00:00:00")){
             System.out.println("Count:");
             System.out.println(TimerString);
-            CountDownTimer.interval(1000, number -> {
-                TimerCountdown();
-            });
+            if(isFirstTimer){
+                CountDownTimer.interval(1000, number -> {
+                    TimerCountdown();
+                });
+            }
+            if(CountDownTimer.isDisposed()){
+                CountDownTimer.interval(1000, number -> {
+                    TimerCountdown();
+                });
+            }
             isStarted = true;
         }
 
     }
 
     public void StopCount(){
+        TimerString = "00:00:00";
         isStarted = false;
         CountDownTimer.cancel();
     }
@@ -273,21 +282,31 @@ public class MyApp extends Application {
                 ResetBuffer();
             } else if (strBuffer.toString().charAt(StrPosition[1]) == 'T' && strBuffer.length() > 2) {
                 switch (strBuffer.toString().charAt(StrPosition[2])) {
+                    case 'S':
+                        Log.d("BT", "Start");
+                        TimeModeStart();
+                        break;
                     case 'N':
                         Log.d("BT", "normal end");
                         TimeModeEndNotify(getString(R.string.main_time_mode_notify_title), getString(R.string.end_reason_normal));
+                        ConsoleActivity.isTiming = false;
+                        StopCount();
                         break;
                     case 'T':
                         Log.d("BT", "temp high end");
                         TimeModeEndNotify(getString(R.string.main_time_mode_notify_title), getString(R.string.end_reason_temp));
+                        ConsoleActivity.isTiming = false;
+                        StopCount();
                         break;
                     case 'C':
                         Log.d("BT", "cancel end");
                         TimeModeEndNotify(getString(R.string.main_time_mode_notify_title), getString(R.string.end_reason_cancel));
+                        ConsoleActivity.isTiming = false;
+                        StopCount();
                         break;
                 }
-                ConsoleActivity.isTiming = false;
-                StopCount();
+
+
                 ResetBuffer();
             }
         } else if (BTValTmp.toString().charAt(0) == EXTEND_DRYER_FIRST_CHAR) {
@@ -299,20 +318,32 @@ public class MyApp extends Application {
             }
             if (strBuffer.toString().charAt(StrPosition[1]) == 'T' && strBuffer.length() > 2) {
                 switch (strBuffer.toString().charAt(StrPosition[2])) {
+                    case 'S':
+                        Log.d("BT", "Start");
+                        TimeModeStart();
+                        break;
                     case 'N':
                         Log.d("BT", "normal end");
                         TimeModeEndNotify(getString(R.string.extend_time_mode_notify_title), getString(R.string.end_reason_normal));
+                        ConsoleActivity.isTiming = false;
+                        StopCount();
                         break;
                     case 'C':
                         Log.d("BT", "cancel end");
                         TimeModeEndNotify(getString(R.string.extend_time_mode_notify_title), getString(R.string.end_reason_cancel));
+                        ConsoleActivity.isTiming = false;
+                        StopCount();
                         break;
                 }
-                StopCount();
-                ConsoleActivity.isTiming = false;
                 ResetBuffer();
             }
         }
+    }
+
+    void TimeModeStart(){
+        ConsoleActivity.isTiming = true;
+        StartCount();
+        ConsoleActivity.TimeModeNotify = true;
     }
 
     private void ResetBuffer() {

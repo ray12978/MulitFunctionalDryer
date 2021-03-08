@@ -16,11 +16,13 @@ import com.ray.mulitfunctionaldryer.R;
 import com.ray.mulitfunctionaldryer.component.TimePickerDialog;
 import com.ray.mulitfunctionaldryer.component.BottomNavigation;
 import com.ray.mulitfunctionaldryer.util.MyApp;
+import com.ray.mulitfunctionaldryer.util.RxTimer;
 import com.ray.mulitfunctionaldryer.util.RxTimer2;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.constraintlayout.widget.ConstraintLayout;
 
 public class ConsoleActivity extends AppCompatActivity {
     /*******TimePicker*********/
@@ -40,6 +42,12 @@ public class ConsoleActivity extends AppCompatActivity {
     RadioButton Dryer3RB4;
     RadioButton FoggerRB1;
     RadioButton FoggerRB2;
+    RadioButton ExDryerRB1;
+    RadioButton ExDryerRB2;
+    RadioButton HeatRB1;
+    RadioButton HeatRB2;
+    RadioButton HeatRB3;
+    RadioButton HeatRB4;
     CheckBox TimerCheck;
 
     StringBuffer BTMsg = new StringBuffer();
@@ -51,11 +59,12 @@ public class ConsoleActivity extends AppCompatActivity {
     int HeatMode = 0;
     boolean ExtendFanMode = false;
     public static boolean isTiming = false;
+    public static boolean TimeModeNotify = false;
     private String Times = "000";
     Button DryerStartBtn;
     Button DryerStopBtn;
 
-    RxTimer2 rxTimer = new RxTimer2();
+    RxTimer rxTimer = new RxTimer();
 
     /**
      * @param DeviceType
@@ -78,10 +87,10 @@ public class ConsoleActivity extends AppCompatActivity {
         initButtonEvent();
         setToolbar();
         CounterStart();
-
     }
 
-    void CounterStart(){
+
+    void CounterStart() {
         rxTimer.interval(500, number -> {
             if (MyApp.getTimeString().length() > 1 && isTiming) {
                 TimerText.setText(MyApp.getTimeString());
@@ -92,26 +101,35 @@ public class ConsoleActivity extends AppCompatActivity {
                     MyAppInst.StopCount();
                     TimerText.setText(MyApp.TimerString);
                 }
+                if(TimeModeNotify){
+                    if(DeviceType == 1) makeSnack(getString(R.string.main_time_mode_start));
+                    if(DeviceType == 2) makeSnack(getString(R.string.ex_time_mode_start));
+                    TimeModeNotify = false;
+                }
             }
+            if(MyApp.getTimeString().length()> 1 && !isTiming) TimerText.setText(MyApp.TimerString);
         });
     }
 
-    private boolean VerifyMainDeviceSett(){
+    private boolean VerifyMainDeviceSett() {
         boolean ans = true;
         return ans;
     }
-    private boolean VerifyExtendDeviceSett(){
+
+    private boolean VerifyExtendDeviceSett() {
         boolean ans = true;
-        if(DeviceType == 2 && HeatMode != 0 && !ExtendFanMode) ans = false;
-        if(DeviceType == 2 && !Dryer2RB1.isChecked() && !Dryer2RB2.isChecked()) ans = false;
+        if (DeviceType == 2 && HeatMode != 0 && !ExtendFanMode) ans = false;
+        if (DeviceType == 2 && !Dryer2RB1.isChecked() && !Dryer2RB2.isChecked()) ans = false;
         return ans;
     }
+
     private void initConsole() {
         TimerText = findViewById(R.id.TimerTV);
         TimerText.setOnClickListener(v -> {
-            if(!TimerCheck.isChecked()) dialog.showDialog();
-            else if(TimerCheck.isChecked()) makeSnack("已停用定時功能");
+            if (!TimerCheck.isChecked()) dialog.showDialog();
+            else if (TimerCheck.isChecked()) makeSnack("已停用定時功能");
         });
+        //Type1
         Dryer1RB1 = findViewById(R.id.Dryer1RBtn1);
         Dryer1RB2 = findViewById(R.id.Dryer1RBtn2);
         Dryer2RB1 = findViewById(R.id.Dryer2RBtn1);
@@ -120,9 +138,18 @@ public class ConsoleActivity extends AppCompatActivity {
         Dryer3RB1 = findViewById(R.id.Dryer3RBtn1);
         Dryer3RB2 = findViewById(R.id.Dryer3RBtn2);
         Dryer3RB3 = findViewById(R.id.Dryer3RBtn3);
-        Dryer3RB4 = findViewById(R.id.Dryer3RBtn4);
         FoggerRB1 = findViewById(R.id.ForRBtnOn);
         FoggerRB2 = findViewById(R.id.ForRBtnOff);
+
+        //Type2
+        HeatRB1 = findViewById(R.id.HeatRBtn1);
+        HeatRB2 = findViewById(R.id.HeatRBtn2);
+        HeatRB3 = findViewById(R.id.HeatRBtn3);
+        HeatRB4 = findViewById(R.id.HeatRBtn4);
+        ExDryerRB1 = findViewById(R.id.ExDryerRBtn1);
+        ExDryerRB2 = findViewById(R.id.ExDryerRBtn2);
+
+
         TimerCheck = findViewById(R.id.TimerCheck);
         DryerStartBtn = findViewById(R.id.DryerStartBtn);
         DryerStopBtn = findViewById(R.id.DryerCancelBtn);
@@ -135,38 +162,62 @@ public class ConsoleActivity extends AppCompatActivity {
         TextView DryerTitle2 = findViewById(R.id.DryerTitle2);
         TextView DryerTitle1 = findViewById(R.id.DryerTitle1);
         TextView FoggerTitle = findViewById(R.id.textView6);
-        RadioButton FoggerRBOn = findViewById(R.id.ForRBtnOn);
-        RadioButton FoggerRBOff = findViewById(R.id.ForRBtnOff);
-
+        TextView HeatTitle = findViewById(R.id.HeatTitle);
+        TextView ExDryerTitle = findViewById(R.id.ExDryerTitle);
         DeviceType = MyApp.getDeviceIndex();
         if (DeviceType == 2) { //若為子裝置
-            Dryer2RB1.setText(getString(R.string.on_text));
-            Dryer2RB2.setText(getString(R.string.off_text));
-            Dryer2RB3.setVisibility(View.INVISIBLE);
-            Dryer3RB4.setVisibility(View.VISIBLE);
-            DryerTitle3.setText(getString(R.string.heat_title));
-            DryerTitle2.setText(getString(R.string.dryer_title));
+            HeatTitle.setVisibility(View.VISIBLE);
+            ExDryerTitle.setVisibility(View.VISIBLE);
+            HeatRB1.setVisibility(View.VISIBLE);
+            HeatRB2.setVisibility(View.VISIBLE);
+            HeatRB3.setVisibility(View.VISIBLE);
+            HeatRB4.setVisibility(View.VISIBLE);
+            ExDryerRB1.setVisibility(View.VISIBLE);
+            ExDryerRB2.setVisibility(View.VISIBLE);
+
+
             Dryer1RB1.setVisibility(View.INVISIBLE);
             Dryer1RB2.setVisibility(View.INVISIBLE);
+            Dryer2RB1.setVisibility(View.INVISIBLE);
+            Dryer2RB2.setVisibility(View.INVISIBLE);
+            Dryer2RB3.setVisibility(View.INVISIBLE);
+            Dryer3RB1.setVisibility(View.INVISIBLE);
+            Dryer3RB2.setVisibility(View.INVISIBLE);
+            Dryer3RB3.setVisibility(View.INVISIBLE);
             DryerTitle1.setVisibility(View.INVISIBLE);
+            DryerTitle2.setVisibility(View.INVISIBLE);
+            DryerTitle3.setVisibility(View.INVISIBLE);
             FoggerTitle.setVisibility(View.INVISIBLE);
-            FoggerRBOn.setVisibility(View.INVISIBLE);
-            FoggerRBOff.setVisibility(View.INVISIBLE);
+            FoggerRB1.setVisibility(View.INVISIBLE);
+            FoggerRB2.setVisibility(View.INVISIBLE);
         }
-        if (DeviceType == 1) { //若為主裝置
-            Dryer2RB1.setText(getString(R.string.radiobutton_text_0));
-            Dryer2RB2.setText(getString(R.string.radiobutton_text_1));
-            Dryer2RB3.setVisibility(View.VISIBLE);
-            Dryer3RB4.setVisibility(View.INVISIBLE);
-            DryerTitle3.setVisibility(View.VISIBLE);
-            DryerTitle1.setVisibility(View.VISIBLE);
-            DryerTitle2.setText(getString(R.string.radio_btn_title_2));
-            DryerTitle3.setText(getString(R.string.radio_btn_title_3));
+        if (DeviceType == 1 || DeviceType == 0) { //若為主裝置
+            HeatTitle.setVisibility(View.INVISIBLE);
+            ExDryerTitle.setVisibility(View.INVISIBLE);
+            HeatRB1.setVisibility(View.INVISIBLE);
+            HeatRB2.setVisibility(View.INVISIBLE);
+            HeatRB3.setVisibility(View.INVISIBLE);
+            HeatRB4.setVisibility(View.INVISIBLE);
+            ExDryerRB1.setVisibility(View.INVISIBLE);
+            ExDryerRB2.setVisibility(View.INVISIBLE);
+
+
             Dryer1RB1.setVisibility(View.VISIBLE);
             Dryer1RB2.setVisibility(View.VISIBLE);
+            Dryer2RB1.setVisibility(View.VISIBLE);
+            Dryer2RB2.setVisibility(View.VISIBLE);
+            Dryer2RB3.setVisibility(View.VISIBLE);
+            Dryer3RB1.setVisibility(View.VISIBLE);
+            Dryer3RB2.setVisibility(View.VISIBLE);
+            Dryer3RB3.setVisibility(View.VISIBLE);
+            DryerTitle1.setVisibility(View.VISIBLE);
+            DryerTitle2.setVisibility(View.VISIBLE);
+            DryerTitle3.setVisibility(View.VISIBLE);
             FoggerTitle.setVisibility(View.VISIBLE);
-            FoggerRBOn.setVisibility(View.VISIBLE);
-            FoggerRBOff.setVisibility(View.VISIBLE);
+            FoggerRB1.setVisibility(View.VISIBLE);
+            FoggerRB2.setVisibility(View.VISIBLE);
+
+
         }
     }
 
@@ -183,8 +234,8 @@ public class ConsoleActivity extends AppCompatActivity {
                     else if (BTMsg.length() == 0) makeSnack(getString(R.string.lost_setting_warn));
                     else {
                         MyAppInst.WriteBT(BTMsg.toString());
-                        MyAppInst.StartCount();
-                        isTiming = true;
+                        //MyAppInst.StartCount();
+                        //isTiming = true;
                     }
 
                     //test
@@ -213,43 +264,25 @@ public class ConsoleActivity extends AppCompatActivity {
     }
 
     private void getData() {
-        if (Dryer1RB1.isChecked()) {
-            if (DeviceType == 1)  Dryer1 = 0;
+        if (DeviceType == 1) {
+            if (Dryer1RB1.isChecked()) Dryer1 = 0;
+            if (Dryer1RB2.isChecked()) Dryer1 = 1;
+            if (Dryer2RB1.isChecked()) Dryer2 = 0;
+            if (Dryer2RB2.isChecked()) Dryer2 = 1;
+            if (Dryer2RB3.isChecked()) Dryer2 = 2;
+            if (Dryer3RB1.isChecked()) Dryer3 = 0;
+            if (Dryer3RB2.isChecked()) Dryer3 = 1;
+            if (Dryer3RB3.isChecked()) Dryer3 = 2;
+            if (FoggerRB1.isChecked()) Fogger = true;
+            if (FoggerRB2.isChecked()) Fogger = false;
+        } else if (DeviceType == 2) {
+            if (HeatRB1.isChecked()) HeatMode = 0;
+            if (HeatRB2.isChecked()) HeatMode = 1;
+            if (HeatRB3.isChecked()) HeatMode = 2;
+            if (HeatRB4.isChecked()) HeatMode = 3;
+            if (ExDryerRB1.isChecked()) ExtendFanMode = true;
+            if (ExDryerRB2.isChecked()) ExtendFanMode = false;
         }
-
-        if (Dryer1RB2.isChecked()) {
-            if (DeviceType == 1)  Dryer1 = 1;
-        }
-
-        if (Dryer2RB1.isChecked()) {
-            if (DeviceType == 2) ExtendFanMode = true;
-            else Dryer2 = 0;
-        }
-        if (Dryer2RB2.isChecked()) {
-            if (DeviceType == 2) ExtendFanMode = false;
-            else Dryer2 = 1;
-        }
-        if (Dryer2RB3.isChecked()) Dryer2 = 2;
-        if (Dryer3RB1.isChecked()) {
-            if (DeviceType == 2)
-                HeatMode = 0;
-            else Dryer3 = 0;
-        }
-        if (Dryer3RB2.isChecked()) {
-            if (DeviceType == 2)
-                HeatMode = 1;
-            else Dryer3 = 1;
-        }
-        if (Dryer3RB3.isChecked()) {
-            if (DeviceType == 2)
-                HeatMode = 2;
-            else Dryer3 = 2;
-        }
-        if (Dryer3RB4.isChecked()) {
-            HeatMode = 3;
-        }
-        if (FoggerRB1.isChecked()) Fogger = true;
-        if (FoggerRB2.isChecked()) Fogger = false;
         TimeMode = !TimerCheck.isChecked();
     }
 
@@ -286,9 +319,9 @@ public class ConsoleActivity extends AppCompatActivity {
 
     private void setToolbar() {
         Toolbar toolbar = findViewById(R.id.toolbar);
-        if(DeviceType == 0) toolbar.setTitle(getString(R.string.console_toolbar_title_unknown));
-        if(DeviceType == 1) toolbar.setTitle(getString(R.string.console_toolbar_title_main));
-        if(DeviceType == 2) toolbar.setTitle(getString(R.string.console_toolbar_title_extend));
+        if (DeviceType == 0) toolbar.setTitle(getString(R.string.console_toolbar_title_unknown));
+        if (DeviceType == 1) toolbar.setTitle(getString(R.string.console_toolbar_title_main));
+        if (DeviceType == 2) toolbar.setTitle(getString(R.string.console_toolbar_title_extend));
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setHomeButtonEnabled(true);
