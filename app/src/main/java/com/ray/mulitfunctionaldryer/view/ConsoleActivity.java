@@ -17,12 +17,10 @@ import com.ray.mulitfunctionaldryer.component.TimePickerDialog;
 import com.ray.mulitfunctionaldryer.component.BottomNavigation;
 import com.ray.mulitfunctionaldryer.util.MyApp;
 import com.ray.mulitfunctionaldryer.util.RxTimer;
-import com.ray.mulitfunctionaldryer.util.RxTimer2;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
-import androidx.constraintlayout.widget.ConstraintLayout;
 
 public class ConsoleActivity extends AppCompatActivity {
     /*******TimePicker*********/

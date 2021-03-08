@@ -6,13 +6,10 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.app.AlertDialog;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.Menu;
-import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -27,11 +24,9 @@ import com.ray.mulitfunctionaldryer.component.BottomNavigation;
 import com.ray.mulitfunctionaldryer.component.WaterPieChart;
 import com.ray.mulitfunctionaldryer.util.MyApp;
 import com.ray.mulitfunctionaldryer.util.RxTimer;
-import com.ray.mulitfunctionaldryer.util.RxTimer2;
 
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
-import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
 
 public class MainActivity extends AppCompatActivity {
