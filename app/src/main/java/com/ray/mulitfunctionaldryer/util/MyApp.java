@@ -23,7 +23,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.UUID;
-import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -53,7 +52,7 @@ public class MyApp extends Application {
     char MAIN_DRYER_FIRST_CHAR = 'M';
     char EXTEND_DRYER_FIRST_CHAR = 'E';
 
-    public static int isMainDevice = 0;
+    public static int DeviceIndex = 0;
     public static boolean WaterBeeped = false;
     public static boolean TempBeeped = false;
     /**
@@ -92,7 +91,7 @@ public class MyApp extends Application {
      * Timer
      **/
     static int[] TimeSaver = new int[4];
-    static String TimerString = "";
+    public static String TimerString = "";
     final RxTimer CountDownTimer = new RxTimer();
     boolean isStarted = false;
 
@@ -123,7 +122,10 @@ public class MyApp extends Application {
     }
 
     public void StartCount() {
-        if(!isStarted){
+        System.out.println(TimerString);
+        if(!isStarted && !TimerString.equals("00:00:00")){
+            System.out.println("Count:");
+            System.out.println(TimerString);
             CountDownTimer.interval(1000, number -> {
                 TimerCountdown();
             });
@@ -156,7 +158,7 @@ public class MyApp extends Application {
         times = times.concat(minutes);
         times = times.concat(seconds);
 
-        TimerString = times;
+        setTimeString(times);
     }
 
     public static void setTimeString(String s) {
@@ -477,11 +479,11 @@ public class MyApp extends Application {
     }
 
     public static int getDeviceIndex() {
-        return isMainDevice;
+        return DeviceIndex;
     }
 
     public static void setDeviceIndex(int i) {
-        isMainDevice = i;
+        DeviceIndex = i;
     }
 
     public interface OnConnectedDevice {

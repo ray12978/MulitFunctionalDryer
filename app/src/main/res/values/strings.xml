@@ -17,6 +17,7 @@
     <string name="menu">側邊欄</string>
     <string name="radio_btn_title_1">吹風裝置1  段數</string>
     <string name="radio_btn_title_2">吹風裝置2  段數</string>
+    <string name="radio_btn_title_3">吹風裝置3  段數</string>
     <string name="main_time_mode_notify_title">主吹風裝置計時模式已結束</string>
     <string name="extend_time_mode_notify_title">子吹風裝置計時模式已結束</string>
     <string name="end_reason_normal">結束原因:正常結束</string>
