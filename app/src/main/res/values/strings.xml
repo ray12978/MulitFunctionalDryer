@@ -61,6 +61,7 @@
     <string name="select_correct_device_first_text">請先選擇欲連線裝置</string>
     <string name="temperature_unit">°C</string>
     <string name="bluetooth_lost_warn">啟動失敗，請先連線藍芽</string>
+    <string name="time_lost_warn">請先設定時間</string>
     <string name="open_dryer_and_heat_warn">啟動失敗，請同時開啟吹風裝置與加熱功能</string>
     <string name="lost_setting_warn">啟動失敗，請先確認設定</string>
     <string name="bluetooth_conn_failed_text">藍芽連線失敗</string>

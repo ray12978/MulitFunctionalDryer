@@ -58,7 +58,7 @@ public class ConsoleActivity extends AppCompatActivity {
     boolean ExtendFanMode = false;
     public static boolean isTiming = false;
     public static boolean TimeModeNotify = false;
-    private String Times = "000";
+    public static String Times = "000";
     Button DryerStartBtn;
     Button DryerStopBtn;
 
@@ -99,13 +99,14 @@ public class ConsoleActivity extends AppCompatActivity {
                     MyAppInst.StopCount();
                     TimerText.setText(MyApp.TimerString);
                 }
-                if(TimeModeNotify){
-                    if(DeviceType == 1) makeSnack(getString(R.string.main_time_mode_start));
-                    if(DeviceType == 2) makeSnack(getString(R.string.ex_time_mode_start));
+                if (TimeModeNotify) {
+                    if (DeviceType == 1) makeSnack(getString(R.string.main_time_mode_start));
+                    if (DeviceType == 2) makeSnack(getString(R.string.ex_time_mode_start));
                     TimeModeNotify = false;
                 }
             }
-            if(MyApp.getTimeString().length()> 1 && !isTiming) TimerText.setText(MyApp.TimerString);
+            if (MyApp.getTimeString().length() > 1 && !isTiming)
+                TimerText.setText(MyApp.TimerString);
         });
     }
 
@@ -116,8 +117,9 @@ public class ConsoleActivity extends AppCompatActivity {
 
     private boolean VerifyExtendDeviceSett() {
         boolean ans = true;
-        if (DeviceType == 2 && HeatMode != 0 && !ExtendFanMode) ans = false;
-        if (DeviceType == 2 && !Dryer2RB1.isChecked() && !Dryer2RB2.isChecked()) ans = false;
+        if (DeviceType == 2) {
+            if (HeatMode != 0 && !ExtendFanMode) ans = false;
+        }
         return ans;
     }
 
@@ -230,7 +232,11 @@ public class ConsoleActivity extends AppCompatActivity {
                 } else {
                     if (!MyApp.getConnected()) makeSnack(getString(R.string.bluetooth_lost_warn));
                     else if (BTMsg.length() == 0) makeSnack(getString(R.string.lost_setting_warn));
-                    else {
+                    else if (TimeMode) {
+                        if (Times.length() == 0 || Times.equals("000"))
+                            makeSnack(getString(R.string.time_lost_warn));
+                        else MyAppInst.WriteBT(BTMsg.toString());
+                    } else {
                         MyAppInst.WriteBT(BTMsg.toString());
                         //MyAppInst.StartCount();
                         //isTiming = true;
@@ -293,7 +299,7 @@ public class ConsoleActivity extends AppCompatActivity {
         else if (index == 1) BTMsg.append('N');
 
         BTMsg.append('D');
-
+        if (index == 1) BTMsg.append(Dryer1);
         if (index == 1) BTMsg.append(Dryer2);
         else if (index == 2) BTMsg.append(HeatMode);
 

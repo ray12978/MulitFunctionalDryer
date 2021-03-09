@@ -128,12 +128,12 @@ public class MyApp extends Application {
             System.out.println("Count:");
             System.out.println(TimerString);
             if(isFirstTimer){
-                CountDownTimer.interval(1000, number -> {
+                CountDownTimer.interval(1500, number -> {
                     TimerCountdown();
                 });
             }
             if(CountDownTimer.isDisposed()){
-                CountDownTimer.interval(1000, number -> {
+                CountDownTimer.interval(1500, number -> {
                     TimerCountdown();
                 });
             }
@@ -144,6 +144,7 @@ public class MyApp extends Application {
 
     public void StopCount(){
         TimerString = "00:00:00";
+        ConsoleActivity.Times = "";
         isStarted = false;
         CountDownTimer.cancel();
     }
