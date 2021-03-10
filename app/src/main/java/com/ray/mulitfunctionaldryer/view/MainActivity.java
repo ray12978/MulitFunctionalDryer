@@ -72,6 +72,7 @@ public class MainActivity extends AppCompatActivity {
             if (MyApp.getConnected()) UpdateSensorData();
         });
     }
+
     private void Initialize() {
         SensorManager = getSharedPreferences("SensorVal", MODE_PRIVATE);
         float initWater = SensorManager.getFloat("water", 0);
@@ -107,7 +108,7 @@ public class MainActivity extends AppCompatActivity {
         int TempValue = MyAppInst.getTempIndex();
         int WaterVolume = MyAppInst.getWaterIndex();
         float f = (float) WaterVolume / 750 * 100;
-
+        float b = (float) (Math.round(f * 10)) / 10;
         if (f != 0 && f <= 15 && !MyApp.WaterBeeped) {
             MyAppInst.WaterEmptyNotify();
             MyApp.WaterBeeped = true;
@@ -118,10 +119,10 @@ public class MainActivity extends AppCompatActivity {
             MyApp.TempBeeped = true;
         } else if (TempValue < 30) MyApp.TempBeeped = false;
         if (f != 0 && TempValue != 0) {
-            waterPieChart.setPieChartValue(f);
+            waterPieChart.setPieChartValue(b);
             TempView.setText(String.valueOf(TempValue));
             SensorManager.edit()
-                    .putFloat("water", f)
+                    .putFloat("water", b)
                     .putInt("temp", TempValue)
                     .apply();
         }

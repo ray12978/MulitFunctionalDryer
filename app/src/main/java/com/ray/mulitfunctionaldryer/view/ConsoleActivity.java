@@ -258,8 +258,10 @@ public class ConsoleActivity extends AppCompatActivity {
                 MyApp.setTimeString(getString(R.string.timer_default_value));
                 MyApp.setTimeSaver(timestamp);
                 TimerText.setText(getString(R.string.timer_default_value));
-                if (DeviceType == 1) MyAppInst.WriteBT(getString(R.string.bluetooth_main_cancel_text));
-                if (DeviceType == 2) MyAppInst.WriteBT(getString(R.string.bluetooth_extend_cancel_text));
+                if (DeviceType == 1)
+                    MyAppInst.WriteBT(getString(R.string.bluetooth_main_cancel_text));
+                if (DeviceType == 2)
+                    MyAppInst.WriteBT(getString(R.string.bluetooth_extend_cancel_text));
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -293,23 +295,22 @@ public class ConsoleActivity extends AppCompatActivity {
         BTMsg = new StringBuffer();
         BTMsg.append('$');
         BTMsg.append('Y');
-
-        if (Fogger && index == 1) BTMsg.append('Y');
-        else if (index == 1) BTMsg.append('N');
-
-        BTMsg.append('D');
-        if (index == 1) BTMsg.append(Dryer1);
-        if (index == 1) BTMsg.append(Dryer2);
-        else if (index == 2) BTMsg.append(HeatMode);
-
-        if (index == 1) BTMsg.append(Dryer3);
-
-        if (index == 2 && ExtendFanMode) BTMsg.append('Y');
-        else if (index == 2) BTMsg.append('N');
-
+        if (index == 1) {
+            if (Fogger) BTMsg.append('Y');
+            else BTMsg.append('N');
+            BTMsg.append('D');
+            BTMsg.append(Dryer1);
+            BTMsg.append(Dryer2);
+            BTMsg.append(Dryer3);
+        }
+        if (index == 2) {
+            BTMsg.append('D');
+            BTMsg.append(HeatMode);
+            if (ExtendFanMode) BTMsg.append('Y');
+            else BTMsg.append('N');
+        }
         if (TimeMode) BTMsg.append('Y');
         else BTMsg.append('N');
-
         BTMsg.append(Times);
         BTMsg.append('O');
     }
@@ -364,7 +365,7 @@ public class ConsoleActivity extends AppCompatActivity {
 
                     int timeIndex = Math.min(num[0] * 3600 + num[1] * 60 + num[2], 999);
 
-                    Times = "000";
+                    Times = "";
                     MyApp.setTimeSaver(num);
                     Times = Times.concat(String.valueOf(timeIndex / 100));
                     Times = Times.concat(String.valueOf(timeIndex % 100 / 10));
