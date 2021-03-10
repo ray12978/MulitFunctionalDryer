@@ -65,7 +65,8 @@
     <string name="open_dryer_and_heat_warn">啟動失敗，請同時開啟吹風裝置與加熱功能</string>
     <string name="lost_setting_warn">啟動失敗，請先確認設定</string>
     <string name="bluetooth_conn_failed_text">藍芽連線失敗</string>
-    <string name="default_bluetooth_msg">$NND00YN000O</string>
+    <string name="bluetooth_main_cancel_text">$NND00YN000O</string>
+    <string name="bluetooth_extend_cancel_text">$ND0YN000O</string>
     <string name="blue_700_string">"#192E5B"</string>
     <string name="blue_500_string">"#1D65A6"</string>
     <string name="bluetooth_not_open">藍芽尚未開啟</string>

@@ -348,6 +348,16 @@
         app:layout_constraintTop_toBottomOf="@+id/include" />
 
     <com.ray.mulitfunctionaldryer.component.blRadioGroup
+        android:id="@+id/ExDryerRG"
+        android:layout_width="0dp"
+        android:layout_height="200dp"
+        app:constraint_referenced_ids="ExDryerRBtn1,ExDryerRBtn2"
+        app:layout_constraintBottom_toTopOf="@+id/Bottom_Main"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/include" />
+
+    <com.ray.mulitfunctionaldryer.component.blRadioGroup
         android:id="@+id/HeatRG"
         android:layout_width="0dp"
         android:layout_height="200dp"

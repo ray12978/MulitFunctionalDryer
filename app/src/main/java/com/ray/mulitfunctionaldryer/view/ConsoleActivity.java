@@ -37,7 +37,6 @@ public class ConsoleActivity extends AppCompatActivity {
     RadioButton Dryer3RB1;
     RadioButton Dryer3RB2;
     RadioButton Dryer3RB3;
-    RadioButton Dryer3RB4;
     RadioButton FoggerRB1;
     RadioButton FoggerRB2;
     RadioButton ExDryerRB1;
@@ -259,8 +258,8 @@ public class ConsoleActivity extends AppCompatActivity {
                 MyApp.setTimeString(getString(R.string.timer_default_value));
                 MyApp.setTimeSaver(timestamp);
                 TimerText.setText(getString(R.string.timer_default_value));
-                MyAppInst.WriteBT(getString(R.string.default_bluetooth_msg));
-
+                if (DeviceType == 1) MyAppInst.WriteBT(getString(R.string.bluetooth_main_cancel_text));
+                if (DeviceType == 2) MyAppInst.WriteBT(getString(R.string.bluetooth_extend_cancel_text));
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -365,7 +364,7 @@ public class ConsoleActivity extends AppCompatActivity {
 
                     int timeIndex = Math.min(num[0] * 3600 + num[1] * 60 + num[2], 999);
 
-                    Times = "";
+                    Times = "000";
                     MyApp.setTimeSaver(num);
                     Times = Times.concat(String.valueOf(timeIndex / 100));
                     Times = Times.concat(String.valueOf(timeIndex % 100 / 10));

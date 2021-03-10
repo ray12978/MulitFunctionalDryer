@@ -144,7 +144,7 @@ public class MyApp extends Application {
 
     public void StopCount(){
         TimerString = "00:00:00";
-        ConsoleActivity.Times = "";
+        ConsoleActivity.Times = "000";
         isStarted = false;
         CountDownTimer.cancel();
     }
@@ -252,7 +252,7 @@ public class MyApp extends Application {
         if (buffer == null) return;
         String a = new String(buffer, 0, count + 1);
 
-        if (a.charAt(0) != MAIN_DRYER_FIRST_CHAR) {
+        if (a.charAt(0) != MAIN_DRYER_FIRST_CHAR && a.charAt(0) != EXTEND_DRYER_FIRST_CHAR) {
             return;
         }
         StrBufTmp.replace(0, count + 1, a);
@@ -262,7 +262,8 @@ public class MyApp extends Application {
         int b = 0;
 
         if (BTValTmp.length() == 0) return;
-        System.out.println(strBuffer);
+        System.out.println("strBuff: ");
+        System.out.println(strBuffer.toString());
         if (strBuffer.toString().charAt(0) == MAIN_DRYER_FIRST_CHAR) {
             for (int i = 0; i < strBuffer.length(); i++) {
                 if (strBuffer.toString().getBytes()[i] > 57) {
@@ -311,6 +312,7 @@ public class MyApp extends Application {
                 ResetBuffer();
             }
         } else if (BTValTmp.toString().charAt(0) == EXTEND_DRYER_FIRST_CHAR) {
+            System.out.println("E in");
             for (int i = 0; i < strBuffer.length(); i++) {
                 if (strBuffer.toString().getBytes()[i] > 57) {
                     StrPosition[b] = i;
@@ -318,6 +320,7 @@ public class MyApp extends Application {
                 }
             }
             if (strBuffer.toString().charAt(StrPosition[1]) == 'T' && strBuffer.length() > 2) {
+                System.out.println("T in");
                 switch (strBuffer.toString().charAt(StrPosition[2])) {
                     case 'S':
                         Log.d("BT", "Start");
